@@ -485,3 +485,21 @@ fieldset.atm-fieldset {
 .md-select-menu-container {
   z-index: 99999 !important;
 }
+
+md-autocomplete input:not(:focus) {
+  color: rgba(0,0,0,0.87) !important;
+}
+
+.atm-fieldset {
+   margin-bottom: 20px;
+}
+
+.atm-fieldset md-input-container {
+    margin: 18px 0 0 0;
+    padding: 0;
+    width: 100%;
+}
+
+.report-container.ng-hide {
+  display: block !important;
+}

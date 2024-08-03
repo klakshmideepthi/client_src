@@ -85,7 +85,7 @@
       </div>
     -->
     </div>
-    <div ng-show="rCtrl.selectedReport.key === 'asset_value_asset'">
+    <div ng-show="rCtrl.selectedReport.key === 'asset_value_asset'" class="report-container">
       <div ng-show="rCtrl.groupBy.key === 'asset'" ng-repeat="asset in rCtrl.assetNames" style="padding: 10px 0px; border-bottom: 2px solid #3a3a3a">
         <label>{{asset.name}}</label>
         <asset-table data="asset.data" asset-filter="rCtrl.asset_filter" date-filter="rCtrl.date_filter" branch-filter="rCtrl.branch_filter" />

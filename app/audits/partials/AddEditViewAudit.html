@@ -53,11 +53,11 @@
                 md-items="item in audCtrl.findMatchingLocations(searchText)"
                 md-item-text="item.name"
                 md-floating-label="Select Audit Location"
-                md-selected-item-change="audCtrl.branchChanged(item)"
+                md-selected-item-change="audCtrl.branchChanged(item)">
                 <md-item-template>
                   <span md-highlight-text="searchText">{{item.name}}</span>
                 </md-item-template>
-                <div ng-messages="audCtrl.auditForm.branch.$error" md-auto-hide="false">
+                <div ng-messages="audCtrl.auditForm.branch.$error" ng-if="audCtrl.auditForm.branch.$touched || audCtrl.auditForm.$submitted">
                   <div ng-message="required">Please select a branch to audit</div>
                 </div>
               </md-autocomplete>
@@ -75,7 +75,7 @@
             </md-input-container>
             <md-input-container class="atm-input" style="width: 100%">
               <label>Notes</label>
-              <textarea ng-model="audCtrl.audit.notes" rows="3" md-maxlength="150" limit-length-to="150" ></textarea>
+              <textarea ng-model="audCtrl.audit.notes" rows="1" md-maxlength="150" limit-length-to="150" ></textarea>
             </md-input-container>
           </div>
           <div ng-hide="audCtrl.editing"><b>{{audCtrl.audit.title}}</b></div>

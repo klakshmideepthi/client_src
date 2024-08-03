@@ -5,6 +5,7 @@ class UseAssetController {
     this.$mdDialog = $mdDialog
     this.$mdToast = $mdToast
     this.asset = asset
+    this.quantity = 1
   }
   useAsset () {
     const url = CONSTANTS.URL_BASE + '/asset/use?ASSET_ID=' + this.asset._id + '&QUANTITY=' + this.quantity

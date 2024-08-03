@@ -130,92 +130,98 @@
               <div flex-gt-xs="50" flex="100">
                 <fieldset class="atm-fieldset">
                   <legend>Insurance</legend>
-                  <div layout="row" layout-wrap layout-align="space-around">
-                    <md-input-container flex="45" style="margin: 7px 0px 0px 0px; width: 100%">
+                  <div layout="row" layout-wrap layout-align="space-between">
+                    <md-input-container flex="45" class="atm-input hide-errors">
                       <md-select ng-model="aaCtrl.newobj.insuranceType" placeholder="Select Type" ng-model-options="{trackBy: '$value.key'}">
                         <md-option ng-value="opt" ng-repeat="opt in aaCtrl.endTypesArray">{{ opt.label }}</md-option>
                       </md-select>
                     </md-input-container>
-                    <md-input-container flex="45" class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 10px; width: 100%">
+                    <md-input-container flex="45" class="atm-input hide-errors">
                       <label>Provider</label>
-                      <input ng-disabled="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'none'" type="text" ng-model="aaCtrl.newobj.insurance" arial-label="Provider"></input>
+                      <input ng-disabled="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'none'" type="text" ng-model="aaCtrl.newobj.insurance" aria-label="Provider">
                     </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'enddate'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
-                      <md-datepicker name="insuranceEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.insuranceEndDate" placeholder="End Date"></md-datepicker>
+                    <div flex="100" ng-if="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key !== 'none'" layout="row" layout-align="space-between">
+                      <md-input-container flex="45" class="atm-input hide-errors" ng-if="aaCtrl.newobj.insuranceType.key === 'enddate'">
+                        <md-datepicker name="insuranceEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.insuranceEndDate" placeholder="End Date"></md-datepicker>
                         <div ng-messages="form.insuranceEndDate.$error">
                           <div ng-message="valid">Invalid date</div>
                         </div>
                       </md-input-container>
-                    </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
-                      <label>Years</label>
-                      <input type="number" ng-model="aaCtrl.newobj.insuranceYears" arial-label="Period- Years"></input>
-                    </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
-                      <label>Months</label>
-                      <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.insuranceMonths" arial-label="Months"></input>
-                    </md-input-container>
-                    <div flex></div>
+                      <div flex="45" layout="row" layout-align="space-between" ng-if="aaCtrl.newobj.insuranceType.key === 'period'">
+                        <md-input-container flex="45" class="atm-input hide-errors">
+                          <label>Years</label>
+                          <input type="number" ng-model="aaCtrl.newobj.insuranceYears" aria-label="Period- Years">
+                        </md-input-container>
+                        <md-input-container flex="45" class="atm-input hide-errors">
+                          <label>Months</label>
+                          <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.insuranceMonths" aria-label="Months">
+                        </md-input-container>
+                      </div>
+                    </div>
                   </div>
                 </fieldset>
                 <fieldset class="atm-fieldset">
                   <legend>Warranty</legend>
-                  <div layout="row" layout-wrap layout-align="space-around">
-                    <md-input-container flex="45" style="margin: 7px 0px 0px 0px; width: 100%">
+                  <div layout="row" layout-wrap layout-align="space-between">
+                    <md-input-container flex="45" class="atm-input hide-errors">
                       <md-select ng-model="aaCtrl.newobj.warrantyType" placeholder="Select Type" ng-model-options="{trackBy: '$value.key'}">
                         <md-option ng-value="opt" ng-repeat="opt in aaCtrl.endTypesArray">{{ opt.label }}</md-option>
                       </md-select>
                     </md-input-container>
-                    <md-input-container flex="45" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
+                    <md-input-container flex="45" class="atm-input hide-errors">
                       <label>Provider</label>
-                      <input ng-disabled="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'none'" type="text" ng-model="aaCtrl.newobj.warranty" arial-label="Provider"></input>
+                      <input ng-disabled="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'none'" type="text" ng-model="aaCtrl.newobj.warranty" aria-label="Provider">
                     </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'enddate'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
-                      <md-datepicker name="warrantyEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.warrantyEndDate" placeholder="End Date"></md-datepicker>
+                    <div flex="100" ng-if="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key !== 'none'" layout="row" layout-align="space-between">
+                      <md-input-container flex="45" class="atm-input hide-errors" ng-if="aaCtrl.newobj.warrantyType.key === 'enddate'">
+                        <md-datepicker name="warrantyEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.warrantyEndDate" placeholder="End Date"></md-datepicker>
                         <div ng-messages="form.warrantyEndDate.$error">
                           <div ng-message="valid">Invalid date</div>
                         </div>
                       </md-input-container>
-                    </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
-                      <label>Years</label>
-                      <input type="number" ng-model="aaCtrl.newobj.warrantyYears" arial-label="Period- Years"></input>
-                    </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
-                      <label>Months</label>
-                      <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.warrantyMonths" arial-label="Months"></input>
-                    </md-input-container>
-                    <div flex></div>
+                      <div flex="45" layout="row" layout-align="space-between" ng-if="aaCtrl.newobj.warrantyType.key === 'period'">
+                        <md-input-container flex="45" class="atm-input hide-errors">
+                          <label>Years</label>
+                          <input type="number" ng-model="aaCtrl.newobj.warrantyYears" aria-label="Period- Years">
+                        </md-input-container>
+                        <md-input-container flex="45" class="atm-input hide-errors">
+                          <label>Months</label>
+                          <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.warrantyMonths" aria-label="Months">
+                        </md-input-container>
+                      </div>
+                    </div>
                   </div>
                 </fieldset>
                 <fieldset class="atm-fieldset">
                   <legend>AMC</legend>
-                  <div layout="row" layout-wrap layout-align="space-around">
-                    <md-input-container flex="45" style="margin: 7px 0px 0px 0px; width: 100%">
+                  <div layout="row" layout-wrap layout-align="space-between">
+                    <md-input-container flex="45" class="atm-input hide-errors">
                       <md-select ng-model="aaCtrl.newobj.AMCType" placeholder="Select Type" ng-model-options="{trackBy: '$value.key'}">
                         <md-option ng-value="opt" ng-repeat="opt in aaCtrl.endTypesArray">{{ opt.label }}</md-option>
                       </md-select>
                     </md-input-container>
-                    <md-input-container flex="45" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
+                    <md-input-container flex="45" class="atm-input hide-errors">
                       <label>Provider</label>
-                      <input ng-disabled="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'none'" type="text" ng-model="aaCtrl.newobj.AMC" arial-label="Provider"></input>
+                      <input ng-disabled="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'none'" type="text" ng-model="aaCtrl.newobj.AMC" aria-label="Provider">
                     </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'enddate'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
-                      <md-datepicker name="AMCEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.AMCEndDate" placeholder="End Date"></md-datepicker>
+                    <div flex="100" ng-if="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key !== 'none'" layout="row" layout-align="space-between">
+                      <md-input-container flex="45" class="atm-input hide-errors" ng-if="aaCtrl.newobj.AMCType.key === 'enddate'">
+                        <md-datepicker name="AMCEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.AMCEndDate" placeholder="End Date"></md-datepicker>
                         <div ng-messages="form.AMCEndDate.$error">
                           <div ng-message="valid">Invalid date</div>
                         </div>
                       </md-input-container>
-                    </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
-                      <label>Years</label>
-                      <input type="number" ng-model="aaCtrl.newobj.AMCYears" arial-label="Period- Years"></input>
-                    </md-input-container>
-                    <md-input-container ng-show="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
-                      <label>Months</label>
-                      <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.AMCMonths" arial-label="Months"></input>
-                    </md-input-container>
-                    <div flex></div>
+                      <div flex="45" layout="row" layout-align="space-between" ng-if="aaCtrl.newobj.AMCType.key === 'period'">
+                        <md-input-container flex="45" class="atm-input hide-errors">
+                          <label>Years</label>
+                          <input type="number" ng-model="aaCtrl.newobj.AMCYears" aria-label="Period- Years">
+                        </md-input-container>
+                        <md-input-container flex="45" class="atm-input hide-errors">
+                          <label>Months</label>
+                          <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.AMCMonths" aria-label="Months">
+                        </md-input-container>
+                      </div>
+                    </div>
                   </div>
                 </fieldset>
               </div>

@@ -16,6 +16,13 @@ class AddCatController {
     this.original = angular.copy(this.newobj)
     this.currentPage = 'cat-form'
   }
+  depMethodChanged(item) {
+    if (item) {
+      this.searchText = item.label;
+      this.newobj.dep_method = item.key;
+      this.selectedDepMethod = item;
+    }
+  }
   submitCategory () {
     const url = CONSTANTS.URL_BASE + '/category'
     const cat = this.processDataForSubmission(this.newobj)

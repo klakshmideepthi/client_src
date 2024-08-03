@@ -35,7 +35,7 @@
           </div>
         </div>
         <div layout="column" flex="50" style="padding: 10px 10px 5px 10px">
-          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input required name="name" ng-model="uaCtrl.newobj.name" type="text" placeholder="Name" ng-disabled="operation === 'edit'"></input>
             <div ng-messages="form.name.$error">
               <div ng-message="required">Name required.</div>
@@ -58,7 +58,7 @@
               <div ng-message="required">Branch required.</div>
             </div>
           </md-autocomplete>
-          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input ng-required="uaCtrl.operation === 'add'" ng-disabled="uaCtrl.operation !== 'add'"  name="email" ng-model="uaCtrl.newobj.email" type="email" placeholder="Email" ng-pattern="/^.+@.+\..+$/"></input>
             <div ng-messages="form.email.$error">
               <div ng-message="required">Email required.</div>
@@ -74,19 +74,19 @@
               <md-radio-button class="atm-radio" value="MA">Manager</md-radio-button>
             </div>
           </md-radio-group>
-          <md-input-container ng-show="uaCtrl.operation === 'edit' && uaCtrl.isCurrentUser()" class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container ng-show="uaCtrl.operation === 'edit' && uaCtrl.isCurrentUser()" class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input ng-required="uaCtrl.newobj.new_password && uaCtrl.operation === 'edit' && uaCtrl.isCurrentUser()" name="old_password" ng-model="uaCtrl.newobj.old_password" type="password" placeholder="Old Password"></input>
             <div ng-messages="form.old_password.$error">
               <div ng-message="required">Please provide existing password.</div>
             </div>
           </md-input-container>
-          <md-input-container ng-show="uaCtrl.operation === 'add'" class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container ng-show="uaCtrl.operation === 'add'" class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input ng-required="uaCtrl.operation === 'add'" name="new_password" ng-model="uaCtrl.newobj.new_password" type="password" placeholder="Password"></input>
           </md-input-container>
-          <md-input-container ng-show="uaCtrl.operation === 'edit'" class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container ng-show="uaCtrl.operation === 'edit'" class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input name="new_password" ng-model="uaCtrl.newobj.new_password" type="password" ng-required="uaCtrl.newobj.old_password"  placeholder="New Password"></input>
           </md-input-container>
-          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input ng-required="uaCtrl.newobj.new_password" match-password="new_password" name="confirm_password" ng-model="uaCtrl.newobj.confirm_password" type="password" placeholder="Confirm Password"></input>
             <div ng-messages="form.confirm_password.$error">
               <div ng-message="required">Confirm password required.</div>

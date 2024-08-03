@@ -35,38 +35,38 @@
           </div>
         </div>
         <div layout="column" flex="50" style="padding: 10px 10px 5px 10px">
-          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input required name="name" ng-model="baCtrl.newobj.name" type="text" placeholder="Name" ng-disabled="operation === 'edit'"></input>
             <div ng-messages="form.name.$error">
               <div ng-message="required">Name required.</div>
             </div>
           </md-input-container>
-          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <textarea required name="addressLine" ng-model="baCtrl.newobj.address.addressLine" type="text" placeholder="Address" md-maxlength="150"></textarea>
             <div ng-messages="form.addressLine.$error">
               <div ng-message="required">Address required.</div>
             </div>
           </md-input-container>
-          <md-input-container  class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container  class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <!-- TODO: This should be ideally md-autocomplete with all the existing states  filled up -->
             <input name="state" ng-model="baCtrl.newobj.address.state" type="text" placeholder="State"></input>
           </md-input-container>
         </div>
         <div layout="column" flex="50" style="padding: 10px 10px 5px 10px">
-          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input required name="email" ng-model="baCtrl.newobj.email" type="email" placeholder="Email" ng-pattern="/^.+@.+\..+$/"></input>
             <div ng-messages="form.email.$error">
               <div ng-message="required">Email required.</div>
               <div ng-message="pattern">Not a valid email.</div>
             </div>
           </md-input-container>
-          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input required name="city" ng-model="baCtrl.newobj.address.city" type="text" placeholder="City"></input>
             <div ng-messages="form.city.$error">
               <div ng-message="required">City is required field</div>
             </div>
           </md-input-container>
-          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 20px 0px 0px 0px; width: 100%">
             <input name="pincode" ng-model="baCtrl.newobj.address.pincode" type="text" ng-pattern="/^[1-9][0-9][0-9][0-9][0-9][0-9]$/" placeholder="Postal Code"></input>
             <div ng-messages="form.pincode.$error">
               <div ng-message="required">Postal code is required</div>
