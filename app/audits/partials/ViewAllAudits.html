@@ -1,0 +1,103 @@
+<div style="padding: 30px 15px">
+  <div>
+    <md-button class="md-fab atm-fab-speed-dial atm-md-fab" aria-label="Start new Audit" ng-click="audsCtrl.startNewAudit()"><i class="fa fa-plus"></i></md-button>
+  </div>
+  <!-- TODO: Make this responsive. Right now, it is looking ugly on anything smallr than lg screens -->
+  <div layout="row" layout-wrap>
+    <div style="padding-right: 10px; border-right: 1px solid #eeeeee">
+      <md-input-container class="atm-input hide-errors" style="min-width: 300px; padding: 0px; margin: 0px" md-no-float>
+        <label style="margin-left: -20px">Search</label>
+        <md-icon md-font-icon="fa fa-search" style="top: 2px"></md-icon>
+        <input type="text" ng-model="audsCtrl.filter.searchTxt" placeholder="Search for audit" style="padding-left: 20px">
+      </md-input-container>
+    </div>
+    <div style="margin-left: 10px; padding-right: 10px; border-right: 1px solid #eeeeee">
+      <md-input-container class="atm-input hide-errors" style="margin: 0px; padding: 0px">
+        <label>Completion</label>
+        <md-select class="atm-select" ng-model="audsCtrl.filter.filterStatus" placeholder="Select status">
+          <md-option ng-value>All</md-option>
+          <md-option ng-value="opt"
+            ng-repeat="opt in ['Completed', 'In Progress']">{{ opt }}</md-option>
+        </md-select>
+      </md-input-container>
+    </div>
+    <div ng-show="!audsCtrl.auditService.accessibleBranchIds || audsCtrl.auditService.accessibleBranchIds.length > 1"
+      style="margin-left: 10px; padding-right: 10px; border-right: 1px solid #eeeeee">
+      <md-input-container md-no-float class="atm-input hide-errors" style="margin: 0px; padding: 0px">
+        <label>Branch</label>
+        <md-select class="atm-select" ng-model="audsCtrl.filter.filterBranch"placeholder="Select branch">
+          <md-option ng-value>All</md-option>
+          <md-option ng-value="opt"
+            ng-repeat="opt in audsCtrl.branchService.branches | orderBy: 'name'">{{ opt.name }}</md-option>
+        </md-select>
+      </md-input-container>
+    </div>
+    <div style="margin-left: 10px; padding-right: 10px; border-right: 1px solid #eeeeee">
+      <md-input-container md-no-float class="atm-input hide-errors" style="margin: 0px; padding: 0px">
+        <label>Auditor:</label>
+        <md-select class="atm-select" ng-model="audsCtrl.filter.filterAuditor" placeholder="Select auditor">
+          <md-option ng-value>All</md-option>
+          <md-option ng-value="opt"
+            ng-repeat="opt in audsCtrl.usersService.users | orderBy: 'name'">{{ opt.name }}</md-option>
+        </md-select>
+      </md-input-container>
+    </div>
+    <md-input-container class="atm-input hide-errors" style="margin: 0px 0px 0px 20px; min-width: 150px">
+      <label>Period</label>
+      <md-select class="atm-select" ng-model="audsCtrl.filter.selectedPeriod" ng-change="audsCtrl.onPeriodChange()" placeholder="Select Period" ng-model-options="{trackBy: '$value.key'}">
+        <md-option ng-value>All</md-option>
+        <md-option ng-value="opt" ng-repeat="opt in audsCtrl.periodTypes">{{ opt.label }}</md-option>
+      </md-select>
+    </md-input-container>
+    <md-input-container class="atm-input hide-errors" style="margin: 0px 0px 0px 20px">
+      <label>From Date</label>
+      <input mdc-datetime-picker time="false" date="true" type="text" id="fromDate" placeholder="From Date" max-date="audsCtrl.filter.endDate" ng-model="audsCtrl.filter.startDate" class="md-input" ng-disabled="audsCtrl.filter.selectedPeriod.key !== 'custom'" auto-ok="true" click-outside-to-close="true"></input>
+    </md-input-container>
+    <md-input-container class="atm-input hide-errors" style="margin: 0px 0px 0px 20px">
+      <label>To Date</label>
+      <input mdc-datetime-picker time="false" date="true" type="text" id="endDate" placeholder="To Date" min-date="audsCtrl.filter.startDate" ng-model="audsCtrl.filter.endDate" class="md-input" ng-disabled="audsCtrl.filter.selectedPeriod.key !== 'custom'" auto-ok="true" click-outside-to-close="true"></input>
+    </md-input-container>
+    <md-button class="atm-button" STYLE="margin-top: -7px; margin-left; 10px" ng-click="audsCtrl.clearFilters()">Show All</md-button>
+  </div>
+  <md-table-container>
+    <table md-table md-progress="audsCtrl.auditService.audits_promise">
+      <thead md-head md-order="query.order">
+        <tr md-row>
+          <th style="padding: 0 20px 0 0" md-column md-order-by="_index">#</th>
+          <th style="padding: 0 20px 0 0" md-column md-order-by="title" >Title</th>
+          <th style="padding: 0 20px 0 0" md-column md-order-by="branch">Branch</th>
+          <th style="padding: 0 20px 0 0" md-column md-order-by="userName">Auditor</th>
+          <th style="padding: 0 20px 0 0" md-column md-numeric md-order-by="numAssets"># Assets</th>
+          <th style="padding: 0 20px 0 0" md-column md-numeric md-order-by="numFound"># Found</th>
+          <th style="padding: 0 20px 0 0" md-column md-numeric md-order-by="numNotFound"># Not Found</th>
+          <th style="padding: 0 20px 0 0" md-column md-numeric md-order-by="complete">% Complete</th>
+          <th style="padding: 0 20px 0 0" md-column md-order-by="startDate">Start</th>
+          <th style="padding: 0 20px 0 0" md-column md-order-by="endDate">End</th>
+        </tr>
+      </thead>
+      <tbody md-tbody>
+          <tr style="height: 32px; cursor: pointer" ng-click="audsCtrl.viewAudit(item)"
+            ng-class="{'new-item' : (audsCtrl.Date.now() - item.endDate) <= 5000}"
+            id="row{{item._id}}"
+            ng-repeat="item in audsCtrl.auditService.audits
+              | atmsearch : audsCtrl.filter.searchTxt : ['title', 'branch', 'user.name', 'startDate', 'endDate']
+              | atm_status_filter : audsCtrl.filter.filterStatus : 'isCompleted'
+              | filter: {branch: audsCtrl.filter.filterBranch.name}
+              | filter: {userName: audsCtrl.filter.filterAuditor.name}
+              | atm_date_filter : audsCtrl.filter.startDate : audsCtrl.filter.endDate : 'endDate'
+              | orderBy: query.order">
+            <td style="padding: 10px 20px 10px 0" md-cell>{{item._index + 1}}</td>
+            <td style="padding: 10px 20px 10px 0" md-cell>{{item.title}}</td>
+            <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.branch}}</td>
+            <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.userName}}</td>
+            <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.numAssets}}</td>
+            <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.numFound}}</td>
+            <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.numNotFound}}</td>
+            <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.complete}} %</td>
+            <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.startDate | date}}</td>
+            <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.endDate | date}}</td>
+          </tr>
+      </tbody>
+    </table>
+  </md-table-container>
+</div>

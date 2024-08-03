@@ -1,0 +1,246 @@
+<md-dialog style="width: 100%; height: 100%;" aria-label="{{aaCtrl.type === 'search' ? 'Adding an asset by search' : 'Adding an asset manually'}}">
+  <form name="form" novalidate ng-submit="form.$valid && aaCtrl.submitAsset()">
+  <md-toolbar>
+    <div class="md-toolbar-tools" style="background-color: #EC725D">
+      <h2 ng-show="aaCtrl.operation === 'add'">{{aaCtrl.type === 'search' ? 'Adding an asset by search' : 'Adding an asset manually'}}</h2>
+      <h2 ng-hide="aaCtrl.operation === 'add'">Editing asset {{aaCtrl.newobj.name}}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="aaCtrl.cancel()">
+        <i class="fa fa-times"></i>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content style="padding: 10px 10px 5px 10px">
+    <div ng-show="aaCtrl.currentPage === 'confirm_close'" style="padding-bottom: 50px">
+      Are you sure you want to close? All your changes will be lost.
+    </div>
+    <div ng-show="aaCtrl.currentPage === 'product_search'">
+      <div style="margin-bottom: 10px" layout="row">
+        <label style="line-height: 30px; padding-right: 10px"><i class="fa fa-search"></i></label>
+        <md-input-container class="atm-input hide-errors" style="min-width: 300px; padding: 0px; margin: 0px; width: 100%" md-no-float>
+          <input ng-model="aaCtrl.searchTxt" type="text" placeholder="Search for product" style="position: absolute; bottom: 0"></input>
+        </md-input-container>
+      </div>
+      <md-grid-list class="atm-grid-list" md-cols="1" md-cols-gt-sm="3" md-cols-sm="2"
+          md-row-height="85px" md-gutter="20px">
+        <md-grid-tile class="grid-big clickable" ng-click="aaCtrl.productSelected(product)" ng-repeat="product in aaCtrl.products | atmsearch : aaCtrl.searchTxt : ['name', 'manufacturer'] : {}">
+          <div style="top: 0; left: 0; width: 100%; height: 100%; position: absolute" layout="row">
+            <div>
+              <img ng-show="product.image" style="height: 80px" ng-src="{{aaCtrl.IMAGE_BASE_URL}}{{product.image}}" alt="{{product.name}}" title="{{product.name}}"></img>
+              <img ng-hide="product.image" style="height: 80px;" src="/images/product.png" alt="{{product.name}}" title="product.name"></img>
+            </div>
+            <div layout='column' style="padding-left: 10px">
+              <div flex></div>
+              <div style="font-size: 16px; font-weight: 400">{{product.name}}</div>
+              <div class="truncate-long-text" style="font-size: 14px; color: #777">{{product.manufacturer}}</div>
+              <div flex></div>
+            </div>
+          </div>
+        </md-grid-tile>
+      </md-grid-list>
+    </div>
+    <div ng-show="aaCtrl.currentPage === 'asset-form'">
+      <md-tabs md-center-tabs md-dynamic-height class="atm-second-tab">
+        <md-tab id="tab1">
+          <md-tab-label>Details</md-tab-label>
+          <md-tab-body>
+            <div class layout="row" layout-fill="space-between" layout-wrap>
+              <div flex="50" flex-xs="100" style="padding-right: 20px">
+                <fieldset class="atm-fieldset">
+                  <legend>Details</legend>
+                  <div layout="row" layout-wrap layout-align="space-between">
+                    <md-input-container flex-xs="100" flex="50" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <input required name="name" ng-model="aaCtrl.newobj.name" type="text" placeholder="Name"></input>
+                      <div ng-messages="form.name.$error">
+                        <div ng-message="required">Name required.</div>
+                      </div>
+                    </md-input-container>
+                    <md-input-container flex-xs="100" flex="45" class="atm-input hide-errors" style="padding: 0px; margin: 0px; width: 100%">
+                      <md-autocomplete md-input-name="category"
+                        md-min-length="0"
+                        md-selected-item="aaCtrl.selectedCategory"
+                        md-clear-button="true"
+                        md-search-text="searchText"
+                        md-items="item in aaCtrl.findMatchingCategories(searchText)"
+                        md-item-text="item.name"
+                        md-selected-item-change="aaCtrl.categoryChanged(item)"
+                        md-floating-label="Select Category">
+                        <md-item-template>
+                          <span md-highlight-text="searchText">{{item.name}}</span>
+                        </md-item-template>
+                        <div ng-messages="form.category.$error" md-auto-hide="false">
+                          <div ng-message="required">Please select a category</div>
+                        </div>
+                      </md-autocomplete>
+                    </md-input-container>
+                    <md-input-container flex-xs="100" flex="50" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <input ng-model="aaCtrl.newobj.serialNumber" type="text" placeholder="Serial Number"></input>
+                    </md-input-container>
+                    <md-input-container flex-xs="100" flex="45" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <input required ng-disabled="aaCtrl.operation === 'edit'" name="quantity" ng-model="aaCtrl.newobj.quantity" type="number" min="1" placeholder="Quantity"></input>
+                      <div ng-messages="form.quantity.$error">
+                        <div ng-message="required">Quantity is required field</div>
+                        <div ng-message="min">Quantity can't be < 1</div>
+                      </div>
+                    </md-input-container>
+                </fieldset>
+                <fieldset class="atm-fieldset">
+                  <legend>Purchase</legend>
+                  <div layout="row" layout-wrap layout-align="space-between">
+                    <div flex-xs="50" flex="30">
+                      <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                        <input required name="cost" min="0" ng-model="aaCtrl.newobj.cost" ng-currency type="text" placeholder="Price"></input>
+                        <div ng-messages="form.cost.$error">
+                          <div ng-message="required">Price is required field</div>
+                          <div ng-message="min">Negative prices are not valid</div>
+                        </div>
+                      </md-input-container>
+                    </div>
+                    <div flex-xs="50" flex="30">
+                      <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                        <!-- TODO: This should be ideally md-autocomplete with all the existing retailers filled up -->
+                        <input ng-model="aaCtrl.newobj.retailer" type="text" placeholder="Vendor"></input>
+                      </md-input-container>
+                    </div>
+                    <div flex-xs="100" flex-sm="100" flex="30" style="min-width: 125px;">
+                      <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                        <md-datepicker name="purchaseDate" md-open-on-focus md-hide-icons="all" md-max-date="aaCtrl.today" ng-model="aaCtrl.newobj.purchaseDate" placeholder="Date of Purchase"></md-datepicker>
+                        <div ng-messages="form.purchaseDate.$error">
+                          <div ng-message="maxdate">Future dates are not valid</div>
+                          <div ng-message="valid">Invalid date</div>
+                        </div>
+                      </md-input-container>
+                    </div>
+                  </div>
+                </fieldset>
+                <fieldset class="atm-fieldset">
+                  <legend>Other</legend>
+                  <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                    <textarea ng-model="aaCtrl.newobj.comments" type="text" placeholder="Notes"></textarea>
+                  </md-input-container>
+                  <!-- TODO: This should be ideally md-autocomplete with all the existing tags filled up -->
+                  <!-- TODO: Underline for tags is in blue color. Need to change it to standard atm color -->
+                  <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                    <label>Tags (Type tag name and press Enter...)</label>
+                    <md-chips ng-model="aaCtrl.newobj.tags" type="text" placeholder="Enter a tag..." md-removable></md-chips>
+                  </md-input-container>
+                </fieldset>
+              </div>
+              <div flex-gt-xs="50" flex="100">
+                <fieldset class="atm-fieldset">
+                  <legend>Insurance</legend>
+                  <div layout="row" layout-wrap layout-align="space-around">
+                    <md-input-container flex="45" style="margin: 7px 0px 0px 0px; width: 100%">
+                      <md-select ng-model="aaCtrl.newobj.insuranceType" placeholder="Select Type" ng-model-options="{trackBy: '$value.key'}">
+                        <md-option ng-value="opt" ng-repeat="opt in aaCtrl.endTypesArray">{{ opt.label }}</md-option>
+                      </md-select>
+                    </md-input-container>
+                    <md-input-container flex="45" class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 10px; width: 100%">
+                      <label>Provider</label>
+                      <input ng-disabled="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'none'" type="text" ng-model="aaCtrl.newobj.insurance" arial-label="Provider"></input>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'enddate'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <md-datepicker name="insuranceEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.insuranceEndDate" placeholder="End Date"></md-datepicker>
+                        <div ng-messages="form.insuranceEndDate.$error">
+                          <div ng-message="valid">Invalid date</div>
+                        </div>
+                      </md-input-container>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <label>Years</label>
+                      <input type="number" ng-model="aaCtrl.newobj.insuranceYears" arial-label="Period- Years"></input>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.insuranceType && aaCtrl.newobj.insuranceType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
+                      <label>Months</label>
+                      <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.insuranceMonths" arial-label="Months"></input>
+                    </md-input-container>
+                    <div flex></div>
+                  </div>
+                </fieldset>
+                <fieldset class="atm-fieldset">
+                  <legend>Warranty</legend>
+                  <div layout="row" layout-wrap layout-align="space-around">
+                    <md-input-container flex="45" style="margin: 7px 0px 0px 0px; width: 100%">
+                      <md-select ng-model="aaCtrl.newobj.warrantyType" placeholder="Select Type" ng-model-options="{trackBy: '$value.key'}">
+                        <md-option ng-value="opt" ng-repeat="opt in aaCtrl.endTypesArray">{{ opt.label }}</md-option>
+                      </md-select>
+                    </md-input-container>
+                    <md-input-container flex="45" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
+                      <label>Provider</label>
+                      <input ng-disabled="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'none'" type="text" ng-model="aaCtrl.newobj.warranty" arial-label="Provider"></input>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'enddate'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <md-datepicker name="warrantyEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.warrantyEndDate" placeholder="End Date"></md-datepicker>
+                        <div ng-messages="form.warrantyEndDate.$error">
+                          <div ng-message="valid">Invalid date</div>
+                        </div>
+                      </md-input-container>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <label>Years</label>
+                      <input type="number" ng-model="aaCtrl.newobj.warrantyYears" arial-label="Period- Years"></input>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.warrantyType && aaCtrl.newobj.warrantyType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
+                      <label>Months</label>
+                      <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.warrantyMonths" arial-label="Months"></input>
+                    </md-input-container>
+                    <div flex></div>
+                  </div>
+                </fieldset>
+                <fieldset class="atm-fieldset">
+                  <legend>AMC</legend>
+                  <div layout="row" layout-wrap layout-align="space-around">
+                    <md-input-container flex="45" style="margin: 7px 0px 0px 0px; width: 100%">
+                      <md-select ng-model="aaCtrl.newobj.AMCType" placeholder="Select Type" ng-model-options="{trackBy: '$value.key'}">
+                        <md-option ng-value="opt" ng-repeat="opt in aaCtrl.endTypesArray">{{ opt.label }}</md-option>
+                      </md-select>
+                    </md-input-container>
+                    <md-input-container flex="45" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
+                      <label>Provider</label>
+                      <input ng-disabled="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'none'" type="text" ng-model="aaCtrl.newobj.AMC" arial-label="Provider"></input>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'enddate'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <md-datepicker name="AMCEndDate" md-open-on-focus md-hide-icons="all" ng-model="aaCtrl.newobj.AMCEndDate" placeholder="End Date"></md-datepicker>
+                        <div ng-messages="form.AMCEndDate.$error">
+                          <div ng-message="valid">Invalid date</div>
+                        </div>
+                      </md-input-container>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+                      <label>Years</label>
+                      <input type="number" ng-model="aaCtrl.newobj.AMCYears" arial-label="Period- Years"></input>
+                    </md-input-container>
+                    <md-input-container ng-show="aaCtrl.newobj.AMCType && aaCtrl.newobj.AMCType.key === 'period'" flex="30" class="atm-input hide-errors" style="padding: 0px; margin: 18px 0px 0px 10px; width: 100%">
+                      <label>Months</label>
+                      <input type="number" min="1" max="11" ng-model="aaCtrl.newobj.AMCMonths" arial-label="Months"></input>
+                    </md-input-container>
+                    <div flex></div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+          <md-tab-body>
+        </md-tab>
+        <md-tab id="tab1">
+          <md-tab-label>Documents</md-tab-label>
+          <md-tab-body>
+            <div atm-docs original-docs="aaCtrl.docs" on-docs-changed="aaCtrl.docsChanged(docs)">
+            </div>
+          </md-tab-body>
+      </md-tabs>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions layout="row" ng-show="aaCtrl.currentPage === 'confirm_close'">
+    <div flex></div>
+    <md-button class="atm-button" ng-click="aaCtrl.closeConfirmed()">Yes</md-button>
+    <md-button ng-click="aaCtrl.closeCancelled()">No</md-button>
+ </md-dialog-actions>
+  <md-dialog-actions layout="row" ng-hide="aaCtrl.currentPage === 'confirm_close'">
+    <div flex></div>
+    <md-button type="submit" class="atm-button" ng-show="aaCtrl.operation !== 'edit' && aaCtrl.currentPage === 'asset-form'">Add</md-button>
+    <md-button type="submit" class="atm-button" ng-show="aaCtrl.operation === 'edit'">Save</md-button>
+    <md-button ng-click="aaCtrl.cancel()">Cancel</md-button>
+ </md-dialog-actions>
+</form>
+</md-dialog>

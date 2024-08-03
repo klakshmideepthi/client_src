@@ -1,0 +1,37 @@
+<div>
+  <md-button ng-show="bCtrl.accessControl['branch_add']" class="md-fab atm-fab-speed-dial atm-md-fab" aria-label="Add Branch" ng-click="bCtrl.openAddDialog($event)"><i class="fa fa-plus"></i></md-button>
+  <div layout="row"  layout-align="left end" flex-gt-sm="50" flex-lt-sm="100" style="height: 45px; margin: 10px 40px 5px 40px">
+   <label style="line-height: 30px; padding-right: 10px"><i class="fa fa-search"></i></label>
+   <md-input-container class="atm-input hide-errors" style="min-width: 300px; padding: 0px; margin: 0px; width: 100%" md-no-float>
+     <input ng-model="bCtrl.searchTxt" type="text" placeholder="Search for a branch" style="position: absolute; bottom: 0"></input>
+   </md-input-container>
+  </div>
+  <div style="padding: 20px 40px">
+    <md-grid-list  md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="4"
+        md-row-height="90px" md-gutter="20px">
+      <md-grid-tile class="grid-small" ng-repeat="branch in bCtrl.branches | atmsearch : bCtrl.searchTxt : ['name', '_id', 'city', 'email'] : {}">
+        <div class="content">
+         <a ui-sref="root.branch({'branch_id': branch._id})" style="text-decoration: none">
+           <div layout="column" layout-fill style="padding-left: 10px">
+             <div flex></div>
+             <div layout="row">
+               <div layout="column" layout-align="space-around">
+                 <!-- TODO looks like images for branches are not supported -->
+                 <img ng-show="branch.image" height="50px" width="50px"  style="border-radius: 50%;vertical-align: middle" ng-src="{{IMAGE_BASE_URL}}{{branch.image}}"></img>
+                 <img ng-hide="branch.image" height="50px" width="50px"  style="border-radius: 50%;vertical-align: middle" src="/images/bank.jpg"></img>
+               </div>
+               <div style="padding-left: 15px">
+                 <div style="font-size: 16px; color: #3c3c3c; font-weight: 400">{{branch.name}}</div>
+                 <div style="font-size: 15px; color: #23576a; font-weight: 300">
+                   {{branch.address.addressLine}}{{brCtrl.branch.address.city ? ',' : ''}} {{brCtrl.branch.address.city}}
+                   {{brCtrl.branch.address.state ? ',' : ''}} {{brCtrl.branch.address.state}}</div>
+               </div>
+             </div>
+             <div flex></div>
+           </div>
+         </a>
+       </div>
+     </md-grid-tile>
+   </md-grid-list>
+  </div>
+</div>

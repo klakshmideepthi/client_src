@@ -1,0 +1,22 @@
+<div style="margin: 10px 20px 5px 20px">
+  <div class="white-bg" layout="row">
+    <div flex></div>
+    <div layout="column">
+      <div style="text-align: center">
+        <img ng-show="uCtrl.user.image" height="130px" width="130px"  style="border: 3px solid #ebeaea; border-radius: 50%;vertical-align: middle" ng-src="{{IMAGE_BASE_URL}}{{uCtrl.user.image}}"></img>
+        <img ng-hide="uCtrl.user.image" height="130px" width="130px"  style="border: 3px solid #ebeaea; border-radius: 50%;vertical-align: middle" src="/images/male-user.jpg"></img>
+      </div>
+      <h2 style="text-align: center; font-size: 30px; font-weight: 300; color: #3c3c3c; text-transform: uppercase">{{uCtrl.user.name}}</h2>
+      <div style="text-align: center; font-size: 16px; font-weight: 300; color: #818181">{{uCtrl.user.branch_name}}</div>
+      <a ng-href="mailto:{{uCtrl.user.email}}" style="text-decoration: none"><div style="text-align: center; font-size: 12px; font-weight: 300; color: #818181">{{uCtrl.user.email}}</div></a>
+    </div>
+    <div flex>
+      <div layout="row">
+        <div flex></div>
+        <!-- TODO: Test the authorization logic for these buttons -->
+        <md-button ng-show="uCtrl.canEdit()" class="atm-action-button" ng-click="uCtrl.openEditDialog($event)"><i class="fa fa-pencil"></i>&nbsp;EDIT</md-button>
+        <md-button ng-show="uCtrl.canDelete()" class="atm-action-button" ng-click="uCtrl.deleteUser($event)"><i class="fa fa-trash"></i>&nbsp;DELETE</md-button>
+      </div>
+    </div>
+  </div>
+</div>

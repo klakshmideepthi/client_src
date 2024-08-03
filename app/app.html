@@ -1,0 +1,31 @@
+<div ng-show="app.$rootScope.login_verify_in_progress">
+  <div>Verfiying login. Please wait....</div>
+</div>
+<div ng-hide="app.$rootScope.login_verify_in_progress" layout="column" layout-fill style="top: 0px; position: absolute" class="atm-nav">
+  <header style="height: 80px; z-index: 0; background-color: #ec725d">
+    <div ng-include="'TopNav.html'"></div>
+    <!-- <div ng-include="'atm/common/partials/left-nav.html'"></div> -->
+  </header>
+  <md-sidenav  class="md-sidenav-left atm-sidenav" md-component-id="left">
+      <div layout="column">
+        <div layout="row" style="margin-right: 10px; margin-top: 10px; cursor: pointer">
+          <div flex></div>
+          <div ng-click="app.toggleLeftNav()"><i class="fa fa-times"></i></div>
+        </div>
+        <md-button ui-sref="root.users" ng-click="app.toggleLeftNav()" style="text-transform: none; text-align: left">Manage Users</md-button>
+        <md-button ui-sref="root.cats" ng-click="app.toggleLeftNav()" ng-show="app.accessControl['categories_manage']" style="text-transform: none; text-align: left">Manage Categories</md-button>
+        <md-button ng-click="app.logout()" ng-click="app.toggleLeftNav()" style="text-transform: none; text-align: left">Logout</md-button>
+      </div>
+  </md-sidenav>
+  <md-content flex >
+    <div ui-view></div>
+  </md-content>
+  <footer>
+    <div layout="row" layout-align="center center" hide-xs style="color: #818181; background-color: #3c3c3c; min-height: 50px; padding-left: 10px; padding-right: 10px; font-size: 12px">
+      <div>VirtualVault Powered by Infore</div>
+      <div flex></div>
+      <div>&copy; Copyright 2015-17 Infore Systems Inc. All Rights Reserverd</div>
+      <div flex></div>
+      <div><a href="mailto: virtvault@inforesofware.com" style="color:#818181; text-decoration: none">Contact Us</a></div>
+  </footer>
+</div>

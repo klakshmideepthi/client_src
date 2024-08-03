@@ -1,0 +1,242 @@
+<div class="atm-details">
+  <div class="atm-details-title" layout="row">
+    <a ui-sref="root.assets" class="atm-back-button" title="Back" tabindex="0"><i class="fa fa-arrow-circle-left"></i></a>
+    <span style="padding-top: 5px"> {{asset.asset.name}} </span>
+    <div flex></div>
+    <md-button class="atm-action-button" ng-click="asset.editAsset($event)"><i class="fa fa-pencil"></i>&nbsp;EDIT</md-button>
+    <md-button class="atm-action-button" ng-click="asset.openMoveAsset($event)" ng-disabled="asset.asset.quantityAvailable < 1"><i class="fa fa-exchange"></i>&nbsp;MOVE</md-button>
+    <md-button class="atm-action-button" ng-click="asset.openUseAsset($event)" ng-disabled="asset.asset.quantityAvailable < 1"><i class="fa fa-shopping-basket"></i>&nbsp;USED</md-button>
+    <md-button class="atm-action-button" ng-click="asset.deleteAsset($event)"><i class="fa fa-trash"></i>&nbsp;DELETE</md-button>
+ </div>
+ <div layout="row" layout-wrap layout-align="space-around">
+  <div flex="100" flex-gt-sm="25" flex-sm="50" style="padding-right: 15px">
+    <div class="white-bg atm-details-box" style="margin-bottom: 10px; display: flex; justify-content: center">
+      <img ng-show="asset.asset.image" alt="{{asset.asset.name}}" title="{{asset.asset.name}}" style="width:auto;height:auto;max-height:240px; max-width: 100%"
+        ng-src="{{IMAGE_BASE_URL}}{{asset.asset.image}}"></image>
+      <img class="image" ng-hide="asset.asset.image" src="images/unknown_product.png" height="150"
+        alt="Image not available" title="Image not available"></img>
+    </div>
+    <div class="white-bg atm-details-box" style="margin-bottom: 10px; display: flex">
+      <div>
+        <div class="atm-details-box-title">Depreciation</div>
+        <div ng-hide="asset.dep">Not Applicable</div>
+        <div ng-show="asset.dep">
+          <div layout="row">
+            <div flex="50">
+              <div>Book Value: {{asset.dep.curBookValue | currency}}</div>
+              <div>Depreciation: {{asset.dep.curDepreciation | currency}}</div>
+            </div>
+            <!-- TODO: Fix the tooltip size to be a bit smaller
+              Show currnet year only on the label-->
+            <div flex="50" style="cursor: pointer" ng-click="asset.openChartDialog($event, asset.asset)">
+              <canvas id="dep" class="chart chart-line"
+                chart-data="asset.dep.chart.data"
+                chart-labels="[]"
+                chart-series="asset.dep.chart.series">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- TODO: Implement speciciations and manual fields -->
+    <div class="white-bg atm-details-box"><div>No Specifications</div></div>
+    <div class="white-bg atm-details-box"><div>No User Manual</div></div>
+    <div class="white-bg atm-details-box">
+      <div class="atm-details-box-title">Notes:</div>
+      <span>{{asset.asset.comments}}</span>
+    </div>
+    <div class="white-bg atm-details-box">
+      <div class="atm-details-box-title">Tags</div>
+      <span class="atm-details-tag" ng-repeat="tag in asset.asset.tags" ng-if="tag !== 'Untagged'">{{tag}}</span>
+    </div>
+  </div>
+  <div flex="100" flex-gt-sm="25" flex-sm="50" style="padding-right: 15px">
+    <div class="white-bg atm-details-box">
+      <div class="atm-details-box-title">Asset Details</div>
+      <div ng-show="asset.product.manufacturer">Manufacturer: {{asset.product.manufacturer}}</div>
+      <div ng-show="asset.asset.serialNumber">SN: {{asset.asset.serialNumber}}</div>
+      <div>Available Assets: {{asset.asset.quantityAvailable ? asset.asset.quantityAvailable : 0}}</div>
+      <div>Used Assets: {{asset.asset.quantityUsed ? asset.asset.quantityUsed : 0}}</div>
+      <div>In Transit Assets: {{asset.asset.quantityInTransit ? asset.asset.quantityInTransit : 0}}</div>
+      <div class="atm-detail-box-content">Moved Assets: {{asset.asset.quantityMoved ? asset.asset.quantityMoved : 0}}</div>
+      <div class="atm-detail-box-content">Category: {{asset.asset.cat_name}}</div>
+    </div>
+    <div class="white-bg atm-details-box">
+      <div class="atm-details-box-title">Purchase Details</div>
+      <div>Purchased from: {{asset.asset.retailer || 'Unknown'}}</div>
+      <div>Cost: {{(asset.asset.cost || 'Unknown') | currency}}</div>
+      <div>Date of purchase: {{asset.asset.purchaseDate | date : 'd, MMM yyyy' || 'Unknown'}}</div>
+      <div ng-show="asset.asset.warrantyEndDate">Warranty {{asset.asset.warrantyPeriod}}&nbsp;
+        <span ng-show="asset.asset.warrantyExpired" style="color: #EC725D">(expired on {{asset.asset.warrantyEndDate | date: 'd, MMM yyyy'}})</span>
+        <span ng-hide="asset.asset.warrantyExpired">(will expire on {{asset.asset.warrantyEndDate | date: 'd, MMM yyyy'}})</span>
+      </div>
+      <div ng-hide="asset.asset.warrantyEndDate">Warranty: Not taken</div>
+      <div ng-show="asset.asset.warrantyEndDate">Warranty by: {{asset.asset.warrantyProvider || asset.asset.warranty || 'Unknown'}}</div>
+
+      <div ng-show="asset.asset.insuranceEndDate">Insurance {{asset.asset.insurancePeriod}}&nbsp;
+        <span ng-show="asset.asset.insuranceExpired" style="color: #EC725D">(expired on {{asset.asset.insuranceEndDate | date: 'd, MMM yyyy'}})</span>
+        <span ng-hide="asset.asset.insuranceExpired">(will expire on {{asset.asset.insuranceEndDate | date: 'd, MMM yyyy'}})</span>
+      </div>
+      <div ng-hide="asset.asset.insuranceEndDate">Insurance: Not taken</div>
+      <div ng-show="asset.asset.insurance">Insurance by: {{asset.asset.insuranceProvider || asset.asset.insurance || 'Unknown'}}</div>
+
+      <div ng-show="asset.asset.AMCEndDate">AMC {{asset.asset.AMCPeriod}}&nbsp;
+        <span ng-show="asset.asset.AMCExpired" style="color: #EC725D">(expired on {{asset.asset.AMCEndDate | date: 'd, MMM yyyy'}})</span>
+        <span ng-hide="asset.asset.AMCExpired">(will expire on {{asset.asset.AMCEndDate | date: 'd, MMM yyyy'}})</span>
+      </div>
+      <div ng-hide="asset.asset.AMCEndDate">AMC: Not taken</div>
+      <div ng-show="asset.asset.AMC">AMC by: {{asset.asset.AMCProvider || asset.asset.AMC || 'Unknown'}}</div>
+    </div>
+    <div class="white-bg atm-details-box" ng-click="asset.openDocuments($event, asset.docs.Receipt)"  ng-class="{'clickable': asset.docs.Receipt.length}" layout="row">
+      Receitps
+      <div flex></div>
+      {{asset.docs.Receipt.length}}
+    </div>
+    <div class="white-bg atm-details-box" ng-click="asset.openDocuments($event, asset.docs.Warranty)" ng-class="{'clickable': asset.docs.Warranty.length}" layout="row">
+      Warranty
+      <div flex></div>
+      {{asset.docs.Warranty.length}}
+    </div>
+    <div class="white-bg atm-details-box" ng-click="asset.openDocuments($event, asset.docs.AMC)" ng-class="{'clickable': asset.docs.AMC.length}" layout="row">
+      AMC
+      <div flex></div>
+      {{asset.docs.AMC.length}}
+    </div>
+    <div class="white-bg atm-details-box" ng-click="asset.openDocuments($event, asset.docs.Insurance)" ng-class="{'clickable': asset.docs.Insurance.length}" layout="row">
+      Insurance
+      <div flex></div>
+      {{asset.docs.Insurance.length}}
+    </div>
+    <div class="white-bg atm-details-box" ng-click="asset.openDocuments($event, asset.docs.Other)" ng-class="{'clickable': asset.docs.Other.length}" layout="row">
+      Others
+      <div flex></div>
+      {{asset.docs.Other.length}}
+    </div>
+  </div>
+  <div flex="100" flex-gt-sm="50" flex-sm="100">
+    <div class="white-bg atm-details-box">
+      <md-tabs md-center-tabs md-dynamic-height class="atm-second-tab">
+        <md-tab id="tab1">
+          <md-tab-label>Availability</md-tab-label>
+          <md-tab-body>
+            <div ng-show="asset.availability">
+              <div layout="row" style="margin:5px 10px; border-bottom: 1px solid #cbcbcb; font-weight: bold">
+                <span>Branch</span>
+                <span flex></span>
+                <span>Available</span>
+              </div>
+              <div layout="row" ng-repeat="item in asset.availability | orderBy: ['-quantityAvailable', 'branch_name']" style="margin:5px 10px; border-bottom: 1px solid #cbcbcb">
+                <span>{{item.branch_name}}</span>
+                <span flex></span>
+                <span>{{item.quantityAvailable}}</span>
+              </div>
+            </div>
+            <div ng-hide="asset.availability">Not available in any branch</div>
+          </md-tab-body>
+        </md-tab>
+        <md-tab id="tab2">
+          <md-tab-label>Activity</md-tab-label>
+          <md-tab-body>
+            <div layout="column" layout-fill   ng-show="asset.activity && asset.activity.length">
+              <md-table-container>
+                <table md-table>
+                  <thead md-head md-order="query.order">
+                    <tr md-row>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="type" >Activity</th>
+                      <th style="padding: 0 20px 0 0" md-column md-numeric md-order-by="quantity" >Quantity</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="userName">User</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="from">From</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="to">To</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="activityDate">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody md-tbody>
+                    <tr style="height: 32px" md-row ng-repeat="item in asset.activity | orderBy: query.order">
+                      <td style="padding: 10px 20px 10px 0" md-cell>{{item.type}}</td>
+                      <td style="padding: 10px 20px 10px 0" md-cell>{{item.quantity}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.userName}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.from_branch}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.to_branch}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.activityDate | date}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </md-table-container>
+            </div>
+            <div ng-hide="asset.activity && asset.activity.length">No Activity Found</div>
+          </md-tab-body>
+        </md-tab>
+        <md-tab id="tab3">
+          <md-tab-label>Audit</md-tab-label>
+          <md-tab-body>
+            <div layout="column" layout-fill   ng-show="asset.audits && asset.audits.length">
+              <md-table-container>
+                <table md-table>
+                  <thead md-head md-order="asset.audits_table.query.order">
+                    <tr md-row>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="audit_title" >Audit</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="audit_status" >Status</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="audit_user">Auditor</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="audit_date">Date</th>
+                      <th style="max-width: 50px; padding: 0 20px 0 0" md-column md-order-by="audit_comment">Comment</th>
+                    </tr>
+                  </thead>
+                  <tbody md-tbody>
+                    <tr style="height: 32px" md-row ng-repeat="item in asset.audits | orderBy: asset.audits_table.query.order">
+                      <td style="padding: 10px 20px 10px 0" md-cell>{{item.audit_title}}</td>
+                      <td style="padding: 10px 20px 10px 0" md-cell>{{item.audit_status}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.audit_user}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.audit_date | date}}</td>
+                      <td style="max-width: 50px; padding: 10px 20px 10px 0" md-cell>{{item.audit_comment}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </md-table-container>
+            </div>
+            <div ng-hide="asset.audits && asset.audits.length">No Audits Found</div>
+          </md-tab-body>
+        </md-tab>
+        <md-tab id="tab4">
+          <md-tab-label>Workflows</md-tab-label>
+          <md-tab-body>
+            <div layout="column" layout-fill   ng-show="asset.workflows && asset.workflows.length">
+              <md-table-container>
+                <table md-table>
+                  <thead md-head md-order="asset.workflows_table.order">
+                    <tr md-row>
+                      <th style="padding: 0 20px 0 0; width: 70px" md-column md-order-by="key">ID</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="title" >Title</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="creatorName" >Requested By</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="createdAt">Requested On</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="state.label">Status</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="assigneeName" >Assigned To</th>
+                      <th style="padding: 0 20px 0 0" md-column md-order-by="lastChangedAt">Last Updated</th>
+                    </tr>
+                  </thead>
+                  <tbody md-tbody>
+                    <tr style="height: 32px"
+                      id="row{{item._id}}"
+                      ng-repeat="item in asset.workflows | orderBy: asset.workflow_table.order">
+                      <td style="padding: 10px 20px 10px 0" md-cell>
+                        <div><a ui-sref="root.workflows.workflow({wf_id: item._id})" style="color: #EC725D">{{item.key}}</a></div>
+                      </td>
+                      <td style="padding: 10px 20px 10px 0; max-width: 100px;" class="truncate-long-text" md-cell><md-tooltip>{{item.title}}</md-tooltip>{{item.title}}</td>
+                      <td style="padding: 10px 20px 10px 0" md-cell>{{item.creatorName}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.createdAt | amDateFormat: 'DD/MMM/YYYY'}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>
+                        <span ng-style="item.state.style" style="font-size: 10px; padding: 2px 5px; text-transform: uppercase">{{item.state.label}}</span>
+                      </td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.assigneeName}}</td>
+                      <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.lastChangedAt | amDateFormat: 'DD/MMM/YYYY'}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </md-table-container>
+            </div>
+            <div ng-hide="asset.workflows && asset.workflows.length">No Workflows Found</div>
+          </md-tab-body>
+        </md-tab>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<md-dialog flex="50" aria-label="Move asset">
+  <form name="form" novalidate ng-submit="form.$valid && uCtrl.useAsset()">
+  <md-toolbar>
+    <div class="md-toolbar-tools" style="background-color: #EC725D">
+      <h2>Mark asset {{uCtrl.asset.name}} as used</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="uCtrl.cancel()">
+        <i class="fa fa-times"></i>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content style="padding: 10px 10px 5px 10px">
+    <md-input-container flex="100" class="atm-input" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+      <input required name="quantity" ng-model="uCtrl.quantity" min="1" ng-max="uCtrl.asset.quantityAvailable" type="number" placeholder="Quantity"></input>
+      <div class="hint" ng-show="form.quantity.$valid" style="padding-top: 10px" ng-show="form.quantity.$valid">1 to {{uCtrl.asset.quantityAvailable}}</div>
+      <div ng-messages="form.quantity.$error">
+        <div ng-message="required">Please speicify the number of assets to use</div>
+        <div ng-message="min">Quantity has to be >= 1</div>
+        <div ng-message="max">Only {{uCtrl.asset.quantityAvailable}} available to use</div>
+      </div>
+    </md-input-container>
+  </md-dialog-content>
+  <md-dialog-actions layout="row">
+    <div flex></div>
+    <md-button type="submit" class="atm-button">Use</md-button>
+    <md-button ng-click="uCtrl.cancel()">Cancel</md-button>
+  </md-dialog-actions>
+  </form>
+</md-dialog>

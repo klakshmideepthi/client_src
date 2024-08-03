@@ -1,0 +1,53 @@
+<md-dialog aria-label="Login">
+  <form name="form" novalidate ng-submit="form.$valid && lCtrl.tryLogin()">
+    <md-toolbar>
+      <div class="md-toolbar-tools" style="background-color: #EC725D">
+        <h2>Welcome to VirtVault</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="lCtrl.cancel()">
+          <i class="fa fa-times"></i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content style="padding: 10px 10px 5px 10px; min-width: 350px">
+      <div layout="column" style="padding-top: 20px">
+        <div flex layout="row">
+          <div flex></div>
+          <md-input-container class="atm-input" style="padding: 10px 0px; margin: 0px 10px; width: 100%">
+            <label>Email</label>
+            <input required name="email" type="email" ng-model="lCtrl.data.email" arial-label="email"  ng-pattern="/^.+@.+\..+$/"></input>
+            <div ng-messages="form.email.$error">
+              <div ng-message="required">Email required.</div>
+              <div ng-message="pattern">Not a valid email.</div>
+            </div>
+          </md-input-container>
+          <div flex></div>
+        </div>
+        <div flex layout="row">
+          <div flex></div>
+          <md-input-container class="atm-input" style="padding: 10px 0px; margin: 0px 10px; width: 100%">
+            <label>Password</label>
+            <input required name="password" type="password" ng-model="lCtrl.data.password" arial-label="password"></input>
+            <div ng-messages="form.password.$error">
+              <div ng-message="required">Password required.</div>
+            </div>
+          </md-input-container>
+          <div flex></div>
+        </div>
+        <div flex layout="row">
+          <div flex></div>
+          <md-button ng-hide="lCtrl.submit_in_progrss" type="submit" class="atm-button" style="width: 100%">Login</md-button>
+          <md-button ng-show="lCtrl.submit_in_progrss" disabled type="submit" class="atm-button" style="width: 100%">Please Wait...</md-button>
+          <div flex></div>
+        </div>
+        <div ng-show="lCtrl.loginErrorMsg" style="color: #D22; font-size: 13px">{{lCtrl.loginErrorMsg}}</div>
+      </div>
+    </md-dialog-content>
+    <!-- TODO: Implement these two actions -->
+    <!-- <md-dialog-actions layout="row">
+      <md-button style="color: #23576a; text-decoration: none; font-size: 80%; text-transform: none; margin: 0px; padding: 0px">Forgot your password?</md-button>
+      <div flex></div>
+      <md-button style="color: #23576a; text-decoration: none; font-size: 80%;  text-transform: none; margin: 0px; padding: 0px">Sign Up</md-button>
+   </md-dialog-actions> -->
+  </form>
+</md-dialog>

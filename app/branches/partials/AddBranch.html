@@ -1,0 +1,92 @@
+<md-dialog style="width: 100%; height: 100%;" aria-label="{{baCtrl.operation === 'add' ? 'Adding new branch' : 'Editing a branch'}}">
+  <form name="form" novalidate ng-submit="form.$valid && baCtrl.submitBranch()">
+  <md-toolbar>
+    <div class="md-toolbar-tools" style="background-color: #EC725D">
+      <h2 ng-show="baCtrl.operation === 'add'">Adding new branch</h2>
+      <h2 ng-hide="baCtrl.operation === 'add'">Editing branch {{baCtrl.newobj.name}}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="baCtrl.cancel()">
+        <i class="fa fa-times"></i>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content style="padding: 10px 10px 5px 10px">
+    <div ng-show="baCtrl.currentPage === 'confirm_close'" style="padding-bottom: 50px">
+      Are you sure you want to close? All your changes will be lost.
+    </div>
+    <div ng-show="baCtrl.currentPage === 'branch-form'">
+      <div class layout="row" layout-fill="space-between" layout-wrap>
+        <div flex="100" layout="row" style="background-color: #f2f2f2; padding: 20px 10px">
+          <div flex></div>
+          <div style="position:relative; width: 150px; margin 0 auto">
+            <!-- TODO: clicking on the camera icon should launch file explorer It is taking a long time to open -->
+            <img ng-show="baCtrl.newobj.image && !baCtrl.newPic" ng-src="{{baCtrl.IMAGE_BASE_URL}}{{baCtrl.newobj.image}}" style="width:150px; height: 150px; border-radius: 50%; border: 3px solid #cbcbcb"></img>
+            <img ng-hide="baCtrl.newobj.image || baCtrl.newPic" src="images/product.png" style="width:150px; height: 150px; border-radius: 50%; border: 3px solid #cbcbcb"></img>
+            <img ng-show="baCtrl.newPic" ngf-src="baCtrl.newPic" style="width:150px; height: 150px; border-radius: 50%; border: 3px solid #cbcbcb"></img>
+            <div ngf-drop ngf-select ng-model="baCtrl.newPic" ngf-drag-over-class="dragover" ngf-multiple="false" ngf-allow-dir="false" accept="image/*" style="position:absolute; top: 0; left: 0; width: 150px; height: 150px; border: 3px solid #cbcbcb; text-align: center; border-radius: 50%; background: rgba(0,0,0,.4); color: #ffffff">
+              <i class="fa fa-camera" style='padding-top: 90px'></i><br/>
+              <span style="font-size: 10px">Change Picture<br/>(Drag&Drop)</span>
+            </div>
+          </div>
+          <div flex layout="row">
+            <div flex></div>
+            <div layout="column" ng-show="baCtrl.newobj.image || baCtrl.newPic"><div flex></div><md-button class="atm-button" ng-click="baCtrl.deletePicture()" style="margin-right: 10px">Delete Picture</md-button></div>
+          </div>
+        </div>
+        <div layout="column" flex="50" style="padding: 10px 10px 5px 10px">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input required name="name" ng-model="baCtrl.newobj.name" type="text" placeholder="Name" ng-disabled="operation === 'edit'"></input>
+            <div ng-messages="form.name.$error">
+              <div ng-message="required">Name required.</div>
+            </div>
+          </md-input-container>
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <textarea required name="addressLine" ng-model="baCtrl.newobj.address.addressLine" type="text" placeholder="Address" md-maxlength="150"></textarea>
+            <div ng-messages="form.addressLine.$error">
+              <div ng-message="required">Address required.</div>
+            </div>
+          </md-input-container>
+          <md-input-container  class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <!-- TODO: This should be ideally md-autocomplete with all the existing states  filled up -->
+            <input name="state" ng-model="baCtrl.newobj.address.state" type="text" placeholder="State"></input>
+          </md-input-container>
+        </div>
+        <div layout="column" flex="50" style="padding: 10px 10px 5px 10px">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input required name="email" ng-model="baCtrl.newobj.email" type="email" placeholder="Email" ng-pattern="/^.+@.+\..+$/"></input>
+            <div ng-messages="form.email.$error">
+              <div ng-message="required">Email required.</div>
+              <div ng-message="pattern">Not a valid email.</div>
+            </div>
+          </md-input-container>
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input required name="city" ng-model="baCtrl.newobj.address.city" type="text" placeholder="City"></input>
+            <div ng-messages="form.city.$error">
+              <div ng-message="required">City is required field</div>
+            </div>
+          </md-input-container>
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input name="pincode" ng-model="baCtrl.newobj.address.pincode" type="text" ng-pattern="/^[1-9][0-9][0-9][0-9][0-9][0-9]$/" placeholder="Postal Code"></input>
+            <div ng-messages="form.pincode.$error">
+              <div ng-message="required">Postal code is required</div>
+              <div ng-message="pattern">Not a valid postal code</div>
+            </div>
+          </md-input-container>
+        </div>
+      </div>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions layout="row" ng-show="baCtrl.currentPage === 'confirm_close'">
+    <div flex></div>
+    <md-button class="atm-button" ng-click="baCtrl.closeConfirmed()">Yes</md-button>
+    <md-button ng-click="baCtrl.closeCancelled()">No</md-button>
+ </md-dialog-actions>
+  <md-dialog-actions layout="row" ng-hide="baCtrl.currentPage === 'confirm_close'">
+    <div flex></div>
+    <md-button type="submit" class="atm-button" ng-show="baCtrl.operation !== 'edit'">Add</md-button>
+    <md-button type="submit" class="atm-button" ng-show="baCtrl.operation === 'edit'">Save</md-button>
+    <md-button ng-click="baCtrl.cancel()">Cancel</md-button>
+ </md-dialog-actions>
+</form>
+</md-dialog>

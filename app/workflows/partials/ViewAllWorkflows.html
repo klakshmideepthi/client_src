@@ -1,0 +1,34 @@
+<md-table-container>
+  <table md-table>
+    <thead md-head md-order="wfFilterCtrl.query.order" md-on-reorder="wfFilterCtrl.orderChanged">
+      <tr md-row>
+        <th style="padding: 0 20px 0 0" md-column md-numeric md-order-by="_index">#</th>
+        <th style="padding: 0 20px 0 0; width: 70px" md-column md-order-by="key">ID</th>
+        <th style="padding: 0 20px 0 0" md-column md-order-by="title" >Title</th>
+        <th style="padding: 0 20px 0 0" md-column md-order-by="creatorName" >Requested By</th>
+        <th style="padding: 0 20px 0 0" md-column md-order-by="createdAt">Requested On</th>
+        <th style="padding: 0 20px 0 0" md-column md-order-by="state.label">Status</th>
+        <th style="padding: 0 20px 0 0" md-column md-order-by="assigneeName" >Assigned To</th>
+        <th style="padding: 0 20px 0 0" md-column md-order-by="lastChangedAt">Last Updated</th>
+      </tr>
+    </thead>
+    <tbody md-tbody>
+        <tr style="height: 32px"
+          id="row{{item._id}}"
+          ng-repeat="item in wfFilterCtrl.filteredWorkflows || wfsCtrl.workflowService.workflows">
+          <td style="padding: 10px 20px 10px 0" md-cell>{{item._index + 1}}</td>
+          <td style="padding: 10px 20px 10px 0" md-cell>
+            <div><a ui-sref="root.workflows.workflow({wf_id: item._id})" style="color: #EC725D">{{item.key}}</a></div>
+          </td>
+          <td style="padding: 10px 20px 10px 0; max-width: 300px;" class="truncate-long-text" md-cell><md-tooltip>{{item.title}}</md-tooltip>{{item.title}}</td>
+          <td style="padding: 10px 20px 10px 0" md-cell>{{item.creatorName}}</td>
+          <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.createdAt | amDateFormat: 'DD/MMM/YYYY HH:mm:ss'}}</td>
+          <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>
+            <span ng-style="item.state.style" style="font-size: 10px; padding: 2px 5px; text-transform: uppercase">{{item.state.label}}</span>
+          </td>
+          <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.assigneeName}}</td>
+          <td style="white-space: nowrap; padding: 10px 20px 10px 0" md-cell>{{item.lastChangedAt | amDateFormat: 'DD/MMM/YYYY HH:mm:ss'}}</td>
+        </tr>
+    </tbody>
+  </table>
+</md-table-container>

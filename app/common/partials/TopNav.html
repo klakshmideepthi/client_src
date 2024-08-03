@@ -1,0 +1,19 @@
+<md-toolbar class="atm-nav">
+  <div class="md-toolbar-tools">
+    <md-button class="md-no-focus atm-small-button" md-no-ink style="margin-top: 20px" ng-click="app.toggleLeftNav()"><i class="fa fa-bars" style="font-size: 25px"></i></md-button>
+    <div style="margin-left: 0px; margin-top: 10px; cursor: pointer" ng-click="app.goto('root.me')"><img src="/images/logo.png"></img></div>
+    <div style="margin-top: 10px">
+      <md-nav-bar nav-bar-aria-label="navigation links" style="border: 0px">
+        <md-nav-item ng-repeat="item in app.tabs" md-nav-sref="{{item.sref}}" name={{item.name}}>{{item.title}}</md-nav-item>
+      </md-nav-bar>
+    </div>
+    <div flex></div>
+    <div layout="row">
+      <div layout="column" layout-fill="center right" style="margin-top: 30px; font-size: 14px; text-align: right; margin-right: 15px">
+        <div>{{currentUser.name}}</div>
+        <div style="font-size: 10px; padding-top: 5px;">{{app.getBranchNameById(currentUser.branch)}}</div>
+      </div>
+      <a ui-sref="root.user({'user_id': undefined})"><img class="atm-avatar" ng-src="{{currentUser.image ? '/api/v1/image/'+currentUser.image : '/images/male-user.jpg'}}"></img></a>
+    </div>
+  </div>
+</md-toolbar>

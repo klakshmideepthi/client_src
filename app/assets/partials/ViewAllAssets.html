@@ -1,0 +1,94 @@
+<md-fab-speed-dial md-open="false" class="md-scale atm-fab-speed-dial" md-direction="down" md-fab-top-right ng-cloak>
+  <md-fab-trigger><md-button aria-label="Add Asset" class="md-fab atm-md-fab"><i class="fa fa-plus"></i></md-button></md-fab-trigger>
+  <md-fab-actions>
+   <md-button aria-label="Add asset by search" class="md-fab atm-md-fab" ng-click="assets.openAddDialog($event, 'search')">
+     <i class="fa fa-search"></i>
+     <md-tooltip md-direction = "left">Add asset from existing product catalog</md-tooltip>
+   </md-button>
+
+   <md-button aria-label="Add asset manually" class="md-fab atm-md-fab" ng-click="assets.openAddDialog($event, 'manual')">
+     <i class="fa fa-hand-o-up"></i>
+     <md-tooltip md-direction="left">Add asset when product is not in catalog</md-tooltip>
+   </md-button>
+ </md-fab-actions>
+</md-fab-speed-dial>
+
+<!-- Begin Search/Filter/Sort component -->
+<div layout="row"  layout-align="left end" flex-gt-sm="50" flex-lt-sm="100" style="height: 45px; margin: 10px 40px 5px 40px">
+ <label style="line-height: 30px; padding-right: 10px"><i class="fa fa-search"></i></label>
+ <md-input-container class="atm-input hide-errors" style="min-width: 300px; padding: 0px; margin: 0px; width: 100%" md-no-float>
+   <input ng-model="assets.searchTxt" type="text" placeholder="Search for an asset" style="position: absolute; bottom: 0"></input>
+ </md-input-container>
+ <md-menu md-offset="0 48">
+   <md-button ng-click="app.openMenu($mdMenu, $event)" md-no-ink class="atm-button" style="margin-bottom: 0px"><i class="fa fa-filter"></i>&nbsp;Filter
+     {{assets.numSelectedTags ? ('( ' + assets.numSelectedTags + '/' + assets.numTags + ' )') : ''}}</md-button>
+   <md-menu-content class="atm-menu-content" style="width: 300px">
+      <div class="atm-menu-title">Filter By Tags</div>
+      <div style="max-height: 200px; overflow: auto">
+        <md-menu-item ng-show="assets.alltags" class="atm-menu-item" ng-repeat="(key, value) in assets.alltags">
+          <div layout="row" layout-align="left">
+            <md-button md-prevent-menu-close ng-click="assets.toggleTagSelection(key)" class="atm-menu-item-button">{{key}} ({{value}})</md-button>
+            <div flex></div>
+            <div ng-show="assets.selectedTags.hasOwnProperty(key)"><i class="fa fa-check"></i></div>
+          </div>
+        </md-menu-item>
+      </div>
+      <div ng-show="assets.selectedTags" class="atm-menu-footer" layout="row" layout-align="end">
+        <md-button md-prevent-menu-close ng-click="assets.clearTagSelection(key)" style="font-size; 16px; font-weight: 300">Clear</md-button>
+      </div>
+   </md-menu-content>
+ </md-menu>
+ <md-menu md-offset="0 48">
+   <md-button md-menu-align-target md-no-ink class="atm-button" style="margin-bottom: 0px" ng-click="app.openMenu($mdMenu, $event)">Sort By {{assets.sortOrderLabel}}&nbsp;&nbsp;<i class="fa fa-caret-down"></i></md-button>
+   <md-menu-content class="atm-menu-content">
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('A to Z')" class="atm-menu-item-button">A to Z</md-button></md-menu-item>
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('Z to A')" class="atm-menu-item-button">Z to A</md-button></md-menu-item>
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('Latest')" class="atm-menu-item-button">Latest</md-button></md-menu-item>
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('Oldest')" class="atm-menu-item-button">Oldest</md-button></md-menu-item>
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('Price - Low to High')" class="atm-menu-item-button">Price - Low to High</md-button></md-menu-item>
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('Price - High to Low')" class="atm-menu-item-button">Price - High to Low</md-button></md-menu-item>
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('AMC Expiry')" class="atm-menu-item-button">AMC Expiry</md-button></md-menu-item>
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('Warranty Expiry')" class="atm-menu-item-button">Warranty Expiry</md-button></md-menu-item>
+     <md-menu-item class="atm-menu-item"><md-button ng-click="assets.setOrder('Insurance Expiry')" class="atm-menu-item-button">Insurance Expiry</md-button></md-menu-item>
+   </md-menu-content>
+ </md-menu>
+ <div flex></div>
+ <!-- <md-fab-speed-dial md-open="false" class="md-scale atm-md-fab" md-direction="down" md-fab-top-right ng-cloak>
+   <md-fab-trigger><md-button aria-label="Add Asset"><i class="fa fa-plus"></i></md-button></md-fab-trigger>
+   <md-fab-actions>
+    <md-button aria-label="Add asset by search">
+      <i class="fa fa-search"></i>
+    </md-button>
+
+    <md-button aria-label="Add asset manually">
+      <i class="fa fa-hand-o-up"></i>
+    </md-button>
+  </md-fab-actions>
+ </md-fab-speed-dial> -->
+</div>
+<div style="padding: 20px 40px">
+  <md-grid-list  md-cols-xs="1" md-cols-sm="2" md-cols-md="3" md-cols-gt-md="4"
+     md-row-height="220px" md-gutter="20px">
+    <md-grid-tile ng-show="assets.assets" class="grid-big" ng-repeat="asset in assets.assets | atm_tag_search : assets.selectedTags : 'tags' | atmsearch : assets.searchTxt : ['name', 'serialNumber'] : {} | orderBy:assets.sortOrder">
+      <div style="top: 0; left: 0; width: 100%; height: 100%; position: absolute">
+        <a ui-sref="root.asset({'asset_id': asset._id})" style="text-decoration: none">
+          <div class="truncate-long-text title" layout="row" layout-wrap layout-align="left">
+            <div>{{asset.name}}</div>
+            <div flex="100"></div>
+            <div ng-show="asset.serialNumber && asset.serialNumber != 'undefined'" class="subtitle truncate-long-text">SN: {{asset.serialNumber}}</div>
+            <div ng-hide="asset.serialNumber && asset.serialNumber != 'undefined'" class="subtitle">&nbsp;</div>
+            <div flex></div>
+            <div class="subtitle">{{asset.quantityAvailable ? asset.quantityAvailable : 0}} Available</div>
+          </div>
+          <div>
+            <img class="image" ng-show="asset.image" ng-src="{{IMAGE_BASE_URL}}{{asset.image}}"
+              alt="{{asset.name}}" title="{{asset.name}}" height="150"></img>
+            <img class="image" ng-if="!asset.image" height="150" src="images/unknown_product.png"
+              alt="Image not available" title="Image not available"></img>
+          </div>
+          <div class="overlay"></div>
+        </a>
+      </div>
+    </md-grid-tile>
+  </md-grid-list>
+</div>

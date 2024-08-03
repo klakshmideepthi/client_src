@@ -1,0 +1,137 @@
+<div layout="row" ng-show="wfCtrl.wf_id">
+  <div>
+    <div ng-repeat="item in wfFilterCtrl.filteredWorkflows || wfFilterCtrl.workflowService.workflows"
+      ng-style="(wfCtrl.wf_id + '') === (item._id + '') && {'background-color': '#e0e0e0'}"
+      style="cursor: pointer; font-size: 13px; border-bottom: 1px solid #d0d0d0; padding: 3px 5px; max-width: 300px"
+      class="truncate-long-text">
+      <a ui-sref="root.workflows.workflow({wf_id: item._id})" style="color: #212121; text-decoration: none">
+        <md-tooltip>{{item.title}}</md-tooltip>{{item.title}}
+        <div style="padding-bottom: 4px"><b>{{item.key}}</b>
+        </div>
+        <div>
+          <span ng-style="item.state.style" style="font-size: 10px; padding: 2px 5px; text-transform: uppercase">{{item.state.label}}</span> {{item.assigneeName}}
+        </div>
+      </a>
+    </div>
+  </div>
+  <md-divider></md-divider>
+  <div flex ng-show="wfCtrl.selectedWf" layout="column" layout-wrap style="padding: 5px 5px 5px 20px; color: #333; font-size: 14px">
+    <div layout="row">
+      <div style="color: #8b7759">{{wfCtrl.selectedWf.key}}</div>
+      <div flex></div>
+      <div>
+        <md-button ng-hide="wfCtrl.editing" class="atm-action-button" ng-click="wfCtrl.startEditing()"><i class="fa fa-pencil"></i>&nbsp;EDIT<md-tooltip>Edit this workflow request</md-tooltip></md-button>
+        <md-button ng-show="wfCtrl.editing" class="atm-action-button" ng-click="wfCtrl.onEditFlowSave()">SAVE<md-tooltip>Save the workflow request</md-tooltip></md-button>
+        <md-button ng-show="wfCtrl.editing" class="atm-action-button" ng-click="wfCtrl.onEditFlowCancel()"></i>CANCEL<md-tooltip>Cancel editing</md-tooltip></md-button>
+      </div>
+      <div style="font-size: 30px; margin-top: -5px">
+        <i ng-click="wfCtrl.viewPrevWorkflow(wfCtrl.selectedWf)" ng-show="wfCtrl.prevWorkflowExists(wfCtrl.selectedWf)" class="atm-back-button fa fa-caret-up"><md-tooltip>Go to previous workflow request</md-tooltip></i>
+        <i ng-click="wfCtrl.viewNextWorkflow(wfCtrl.selectedWf)" ng-show="wfCtrl.nextWorkflowExists(wfCtrl.selectedWf)" class="atm-back-button fa fa-caret-down"><md-tooltip>Go to next workflow request</md-tooltip></i>
+      </div>
+    </div>
+    <md-input-container ng-show="wfCtrl.editing" class="atm-input" md-no-float style="margin: 0px; width: 100%">
+      <input required type="text" ng-model="wfCtrl.newflow.title" name="title">
+      <div ng-messages="wfCtrl.wfEditForm.title.$error" ng-if="wfCtrl.wfEditForm.title.$touched && wfCtrl.wfEditForm.title.$invalid">
+        <div ng-message="required">Please enter a title for the workflow request</div>
+      </div>
+    </md-input-container>
+    <div ng-hide="wfCtrl.editing" style="font-size: 24px">{{wfCtrl.selectedWf.title}}</div>
+    <div style="padding-top: 20px"><b>Details</b></div>
+    <div layout="row" >
+      <div flex="50">
+        <table>
+          <tr style="margin-bottom: 1px">
+            <td style="background-color: #eee; text-align: right; padding-right: 5px">Type: </td>
+            <td style="white-space: pre">{{wfCtrl.selectedWf.type.label}}</td>
+          </tr>
+          <tr style="margin-bottom: 1px">
+            <td style="background-color: #eee; text-align: right; padding-right: 5px">Status: </td>
+            <td>
+              <span ng-hide="wfCtrl.editing" ng-style="wfCtrl.selectedWf.state.style" style="font-size: 10px; padding: 2px 5px; text-transform: uppercase">
+                {{wfCtrl.selectedWf.state.label}}
+              </span>
+              <md-input-container ng-show="wfCtrl.editing" class="atm-input" md-no-float style="margin: 0px; width: 100%">
+                <md-select ng-model="wfCtrl.newflow.state" placeholder="State">
+                  <md-option ng-value="opt"
+                    ng-repeat="opt in wfCtrl.WORKFLOW_STATES_ARRAY | orderBy: 'stage'">{{ opt.label }}</md-option>
+                </md-select>
+              </md-input-container>
+            </td>
+          </tr>
+          <tr style="margin-bottom: 1px">
+            <td style="background-color: #eee; text-align: right; padding-right: 5px; white-space: pre">Created By: </td>
+            <td style="white-space: pre">{{wfCtrl.selectedWf.creatorName}}</td>
+          </tr>
+          <tr style="margin-bottom: 1px">
+            <td style="background-color: #eee; text-align: right; padding-right: 5px; white-space: pre">Assigned To: </td>
+            <td>
+              <div ng-hide="wfCtrl.editing" style="white-space: pre">{{wfCtrl.selectedWf.assigneeName}}</div>
+              <md-input-container ng-show="wfCtrl.editing" class="atm-input" md-no-float style="margin: 0px; width: 100%">
+                <md-select ng-model="wfCtrl.newflow.assignee" placeholder="Assigned User">
+                  <md-option ng-value="opt"
+                    ng-repeat="opt in wfCtrl.users | orderBy: 'name'">{{ opt.name }}</md-option>
+                </md-select>
+              </md-input-container>
+            </td>
+          </tr>
+          <tr style="margin-bottom: 1px">
+            <td style="background-color: #eee; text-align: right; padding-right: 5px; white-space: pre">Created: </td>
+            <td style="white-space: pre"><span am-time-ago="wfCtrl.selectedWf.createdAt"></span> ({{wfCtrl.selectedWf.createdAt | amDateFormat: 'DD/MMM/YYYY h:mm:ss a'}})</td>
+          </tr>
+          <tr style="margin-bottom: 1px">
+            <td style="background-color: #eee; text-align: right; padding-right: 5px; white-space: pre">Updated: </td>
+            <td style="white-space: pre"><span am-time-ago="wfCtrl.selectedWf.lastChangedAt"></span> ({{wfCtrl.selectedWf.lastChangedAt | amDateFormat: 'DD/MMM/YYYY h:mm:ss a'}})</td>
+          </tr>
+        </table>
+      </div>
+      <div flex="50">
+        <table>
+          <tr ng-repeat="(key, item) in wfCtrl.selectedWf.type.data" style="margin-bottom: 1px">
+            <td style="background-color: #eee; text-align: right; padding-right: 5px; white-space: pre">{{item.title}}: </td>
+            <td style="white-space: pre">{{wfCtrl.selectedWf.data[key]}}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div style="padding-top: 20px"><b>Description</b></div>
+    <div ng-hide="wfCtrl.editing" style="padding-left: 10px; font-size: 18px; white-space:pre">{{wfCtrl.selectedWf.description}}</div>
+    <md-input-container ng-show="wfCtrl.editing" class="atm-input white-bg" md-no-float style="margin: 0px; width: 90%; border: 1px solid #000">
+      <textarea required type="text" ng-model="wfCtrl.newflow.description" name="description" max-rows="5" md-select-on-focus></textarea>
+      <div ng-messages="wfCtrl.wfEditForm.description.$error" ng-if="wfCtrl.wfEditForm.description.$touched && wfCtrl.wfEditForm.description.$invalid">
+        <div ng-message="required">Please enter a description for the workflow request</div>
+      </div>
+    </md-input-container>
+    <div ng-show="wfCtrl.editing" style="padding-top: 20px">
+      <div><b>Add Comment</b></div>
+      <md-input-container class="atm-input white-bg" md-no-float style="margin: 0px; width: 90%; border: 1px solid #000">
+        <textarea type="text" ng-model="wfCtrl.newflow.comment" name="comment" max-rows="5" md-select-on-focus placehoder="Comment"></textarea>
+      </md-input-container>
+    </div>
+    <div ng-show="wfCtrl.editing" atm-docs original-doc-types="wfCtrl.docTypes" on-docs-changed="wfCtrl.docsChanged(docs)" style="width: 90%"></div>
+    <md-tabs md-dynamic-height class="atm-second-tab" style="padding-top: 20px">
+      <md-tab id="tab1">
+        <md-tab-label>History</md-tab-label>
+        <md-tab-body>
+          <div ng-repeat="item in wfCtrl.selectedWf.history | orderBy : '-date'" style="padding: 10px; border-bottom: 1px solid #ccc; font-size: #333; font-size: 14px">
+              <div style="font-size: 12px; color: #000">{{item.userName}} <span am-time-ago="item.date"></span> (<span>{{item.date | amDateFormat: 'DD/MMM/YYYY h:mm:ss a'}})</span></div>
+              <div style="font-size: 12px; color: #000" ng-show="item.from.state !== item.to.state">Changed state <span ng-show="item.from.state">from {{item.from.state.label}}</span> to <b>{{item.to.state.label}}</b></div>
+              <div style="font-size: 12px; color: #000" ng-show="item.from.assigneeId !== item.to.assigneeId && item.to.assigneeName">Assigned to <b>{{item.to.assigneeName}}</b></div>
+              <div style="font-size: 12px; color: #000" ng-show="item.from.title !== item.to.title">Changed title <span ng-show="item.from.title">from '{{item.from.title}}'</span> to <b>'{{item.to.title}}'</b></div>
+              <div style="font-size: 12px; color: #000" ng-show="item.from.description !== item.to.description">Changed description <span ng-show="item.from.description">from '{{item.from.description}}'</span> to <b>'{{item.to.description}}'</b></div>
+              <div style="white-space:pre; padding-left: 10px"><i>{{item.comment}}</i></div>
+          </div>
+        </md-tab-body>
+      </md-tab>
+      <md-tab id="tab2">
+        <md-tab-label>Documents</md-tab-label>
+        <md-tab-body>
+          <div ng-repeat="item in wfCtrl.selectedWf.docs | orderBy : '-date'" style="padding: 10px; border-bottom: 1px solid #ccc; font-size: #333; font-size: 14px">
+            <div style="font-size: 12px; color: #000">{{item.userName}} <span am-time-ago="item.date"></span> (<span>{{item.date | amDateFormat: 'DD/MMM/YYYY h:mm:ss a'}})</span></div>
+            <img style="padding: 10px" ng-src="{{item.url}}"></img>
+            <div>{{item.title}}</div>
+          </div>
+        </md-tab-body>
+      </md-tab>
+    </md-tabs>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<md-dialog flex="50" aria-label="Move asset">
+  <form name="form" novalidate ng-submit="form.$valid && mvCtrl.moveAsset()">
+  <md-toolbar>
+    <div class="md-toolbar-tools" style="background-color: #EC725D">
+      <h2>Moving asset {{mvCtrl.asset.name}}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="mvCtrl.cancel()">
+        <i class="fa fa-times"></i>
+      </md-button>
+    </div>
+  </md-toolbar>
+  <md-dialog-content style="padding: 10px 10px 5px 10px">
+    <md-autocomplete required md-input-name="branch"
+      md-selected-item="mvCtrl.selectedBranch"
+      md-min-length="0"
+      md-clear-button="true"
+      md-search-text="searchText"
+      md-items="item in mvCtrl.branches || [] | filter:{'name': searchText} | filter:{'name': '!' + mvCtrl.asset.branch}"
+      md-item-text="item.name"
+      md-floating-label="Destination Branch">
+      <md-item-template>
+        <span md-highlight-text="searchText">{{item.name}}</span>
+      </md-item-template>
+    </md-autocomplete>
+    <md-input-container flex="100" class="atm-input" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+      <input required name="quantity" ng-model="mvCtrl.quantity" min="1" ng-max="mvCtrl.asset.quantityAvailable" type="number" placeholder="Quantity"></input>
+      <div style="padding-top: 10px" class="hint" ng-show="form.quantity.$valid">1 to {{mvCtrl.asset.quantityAvailable}}</div>
+      <div ng-messages="form.quantity.$error">
+        <div ng-message="required">Please speicify the number of assets to move</div>
+        <div ng-message="min">Quantity has to be >= 1</div>
+        <div ng-message="max">Only {{mvCtrl.asset.quantityAvailable}} available to move</div>
+      </div>
+    </md-input-container>
+    <md-input-container ng-show="mvCtrl.isDemo" flex="100" class="atm-input" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+      <input name="title" ng-model="mvCtrl.title" placeholder="Title for the move request"></input>
+    </md-input-container>
+    <md-input-container ng-show="mvCtrl.isDemo" flex="100" class="atm-input" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+      <textarea name="description" ng-model="mvCtrl.description" placeholder="Description for the move request" max-rows="5"></textarea>
+    </md-input-container>
+  </md-dialog-content>
+  <md-dialog-actions layout="row">
+    <div flex></div>
+    <md-button type="submit" class="atm-button">Move</md-button>
+    <md-button ng-click="mvCtrl.cancel()">Cancel</md-button>
+  </md-dialog-actions>
+  </form>
+</md-dialog>

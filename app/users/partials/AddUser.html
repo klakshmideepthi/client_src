@@ -1,0 +1,112 @@
+<md-dialog style="width: 100%; height: 100%;" aria-label="{{uaCtrl.operation === 'add' ? 'Adding new user' : 'Editing a user'}}">
+  <form name="form" novalidate ng-submit="form.$valid && uaCtrl.submitUser()">
+  <md-toolbar>
+    <div class="md-toolbar-tools" style="background-color: #EC725D">
+      <h2 ng-show="uaCtrl.operation === 'add'">Adding new user</h2>
+      <h2 ng-hide="uaCtrl.operation === 'add'">Editing user {{uaCtrl.newobj.name}}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="uaCtrl.cancel()">
+        <i class="fa fa-times"></i>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content style="padding: 10px 10px 5px 10px">
+    <div ng-show="uaCtrl.currentPage === 'confirm_close'" style="padding-bottom: 50px">
+      Are you sure you want to close? All your changes will be lost.
+    </div>
+    <div ng-show="uaCtrl.currentPage === 'user-form'">
+      <div class layout="row" layout-fill="space-between" layout-wrap>
+        <div flex="100" layout="row" style="background-color: #f2f2f2; padding: 20px 10px">
+          <div flex></div>
+          <div style="position:relative; width: 150px; margin 0 auto">
+            <!-- TODO: clicking on the camera icon should launch file explorer It is taking a long time to open -->
+            <img ng-show="uaCtrl.newobj.image && !uaCtrl.newPic" ng-src="{{uaCtrl.IMAGE_BASE_URL}}{{uaCtrl.newobj.image}}" style="width:150px; height: 150px; border-radius: 50%; border: 3px solid #cbcbcb"></img>
+            <img ng-hide="uaCtrl.newobj.image || uaCtrl.newPic" src="images/product.png" style="width:150px; height: 150px; border-radius: 50%; border: 3px solid #cbcbcb"></img>
+            <img ng-show="uaCtrl.newPic" ngf-src="uaCtrl.newPic" style="width:150px; height: 150px; border-radius: 50%; border: 3px solid #cbcbcb"></img>
+            <div ngf-drop ngf-select ng-model="uaCtrl.newPic" ngf-drag-over-class="dragover" ngf-multiple="false" ngf-allow-dir="false" accept="image/*" style="position:absolute; top: 0; left: 0; width: 150px; height: 150px; border: 3px solid #cbcbcb; text-align: center; border-radius: 50%; background: rgba(0,0,0,.4); color: #ffffff">
+              <i class="fa fa-camera" style='padding-top: 90px'></i><br/>
+              <span style="font-size: 10px">Change Picture<br/>(Drag&Drop)</span>
+            </div>
+          </div>
+          <div flex layout="row">
+            <div flex></div>
+            <div layout="column" ng-show="uaCtrl.newobj.image || uaCtrl.newPic"><div flex></div><md-button class="atm-button" ng-click="uaCtrl.deletePicture()" style="margin-right: 10px">Delete Picture</md-button></div>
+          </div>
+        </div>
+        <div layout="column" flex="50" style="padding: 10px 10px 5px 10px">
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input required name="name" ng-model="uaCtrl.newobj.name" type="text" placeholder="Name" ng-disabled="operation === 'edit'"></input>
+            <div ng-messages="form.name.$error">
+              <div ng-message="required">Name required.</div>
+            </div>
+          </md-input-container>
+          <!-- TODO: User should not be able to edit a branch? -->
+          <md-autocomplete ng-show="uaCtrl.operation === 'add'" ng-required="uaCtrl.operation === 'add'" md-input-name="branch"
+            md-selected-item="uaCtrl.selectedBranch"
+            md-selected-item-change="uaCtrl.branchChanged(item)"
+            md-min-length="0"
+            md-clear-button="true"
+            md-search-text="searchText"
+            md-items="item in uaCtrl.branches || [] | filter:{'name': searchText}"
+            md-item-text="item.name"
+            md-floating-label="Branch">
+            <md-item-template>
+              <span md-highlight-text="searchText">{{item.name}}</span>
+            </md-item-template>
+            <div ng-messages="form.branch.$error">
+              <div ng-message="required">Branch required.</div>
+            </div>
+          </md-autocomplete>
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input ng-required="uaCtrl.operation === 'add'" ng-disabled="uaCtrl.operation !== 'add'"  name="email" ng-model="uaCtrl.newobj.email" type="email" placeholder="Email" ng-pattern="/^.+@.+\..+$/"></input>
+            <div ng-messages="form.email.$error">
+              <div ng-message="required">Email required.</div>
+              <div ng-message="pattern">Not a valid email.</div>
+            </div>
+          </md-input-container>
+        </div>
+        <div layout="column" flex="50" style="padding: 10px 10px 5px 10px">
+          <md-radio-group ng-show="uaCtrl.operation === 'add'" ng-model="uaCtrl.newobj.role">
+            <label>User role</label>
+            <div layout="row" style="padding-top: 10px">
+              <md-radio-button class="atm-radio" style="padding-right: 10px" value="SU">Super User</md-radio-button>
+              <md-radio-button class="atm-radio" value="MA">Manager</md-radio-button>
+            </div>
+          </md-radio-group>
+          <md-input-container ng-show="uaCtrl.operation === 'edit' && uaCtrl.isCurrentUser()" class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input ng-required="uaCtrl.newobj.new_password && uaCtrl.operation === 'edit' && uaCtrl.isCurrentUser()" name="old_password" ng-model="uaCtrl.newobj.old_password" type="password" placeholder="Old Password"></input>
+            <div ng-messages="form.old_password.$error">
+              <div ng-message="required">Please provide existing password.</div>
+            </div>
+          </md-input-container>
+          <md-input-container ng-show="uaCtrl.operation === 'add'" class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input ng-required="uaCtrl.operation === 'add'" name="new_password" ng-model="uaCtrl.newobj.new_password" type="password" placeholder="Password"></input>
+          </md-input-container>
+          <md-input-container ng-show="uaCtrl.operation === 'edit'" class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input name="new_password" ng-model="uaCtrl.newobj.new_password" type="password" ng-required="uaCtrl.newobj.old_password"  placeholder="New Password"></input>
+          </md-input-container>
+          <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 10px 0px 0px 0px; width: 100%">
+            <input ng-required="uaCtrl.newobj.new_password" match-password="new_password" name="confirm_password" ng-model="uaCtrl.newobj.confirm_password" type="password" placeholder="Confirm Password"></input>
+            <div ng-messages="form.confirm_password.$error">
+              <div ng-message="required">Confirm password required.</div>
+              <div ng-message="passwordMatch">Passwords do not match</div>
+            </div>
+          </md-input-container>
+        </div>
+      </div>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions layout="row" ng-show="uaCtrl.currentPage === 'confirm_close'">
+    <div flex></div>
+    <md-button class="atm-button" ng-click="uaCtrl.closeConfirmed()">Yes</md-button>
+    <md-button ng-click="uaCtrl.closeCancelled()">No</md-button>
+ </md-dialog-actions>
+  <md-dialog-actions layout="row" ng-hide="uaCtrl.currentPage === 'confirm_close'">
+    <div flex></div>
+    <md-button type="submit" class="atm-button" ng-show="uaCtrl.operation !== 'edit'">Add</md-button>
+    <md-button type="submit" class="atm-button" ng-show="uaCtrl.operation === 'edit'">Save</md-button>
+    <md-button ng-click="uaCtrl.cancel()">Cancel</md-button>
+ </md-dialog-actions>
+</form>
+</md-dialog>

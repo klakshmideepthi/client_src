@@ -1,0 +1,48 @@
+<div layout="row" layout-wrap layout-align="space-between">
+  <div ng-repeat="docType in docsCtrl.docTypes" flex="{{docsCtrl.docTypes.length > 1 ? 45 : 100}}">
+    <div style="height: 15px; display:block">
+      <span class="label-small" ng-show="docsCtrl.docs.newFiles[docType.type].length || docsCtrl.docs.original[docType.type].length">{{docType.hint}}</span>
+    </div>
+    <div layout layout-sm="column" class="doc-container">
+      <div class="file-drag-drop" ngf-drop ng-model="myFiles" ngf-multiple="true" ngf-accept="{{docType.ext}}" ngf-allow-dir="false"
+      ng-model-rejected="rejFiles" ngf-hide-on-drop-not-available="false" ngf-max-size="5242880" ngf-change="docsCtrl.filesDropped($files, $event, $rejectedFiles, docType.type)"
+      ngf-drag-over-class="{reject:'file-drag-drop-accept', accept:'file-drag-drop-accept'}" style="width:100%">
+        <div class="label-big" ng-hide="docsCtrl.docs.newFiles[docType.type].length || docsCtrl.docs.original[docType.type].length">
+          {{docType.hint + ' | Max Upload Size: 5MB'}}
+        </div>
+        <div layout layout-sm="column">
+          <div style="position:relative; padding:4px" ng-repeat="file in docsCtrl.docs.original[docType.type]" ng-mouseenter="showDelete = true"
+          ng-mouseleave="showDelete = false">
+            <div ng-hide="docsCtrl.docs.deleted[docType.type].indexOf($index) >= 0">
+              <div style="position:relative; top:0px; left:0px">
+                <img ng-src="{{docsCtrl.IMAGE_BASE_URL}}{{file.image}}" class="doc-file-thumbnail" ng-show="file.filetype == 'image'"></img>
+                <img src="images/file-formats-icons/pdf.png" class="doc-file-thumbnail" ng-show="file.filetype=='pdf'"></img>
+              </div>
+              <div style="position:absolute; display:block; top:5px; right:5px">
+                <div style="display:block; min-height:45px; border:1px; cursor:pointer " ng-click="docsCtrl.removeOriginalFile(file, docType.type, $index)">
+                  <span ng-show="showDelete"><i style="color:red; font-size:20px;" class="fa fa-times-circle"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="position:relative; padding:4px;" ng-repeat="file in docsCtrl.docs.newFiles[docType.type]" ng-mouseenter="showDelete = true"
+          ng-mouseleave="showDelete = false">
+            <div style="position:relative; top:0px; left:0px">
+              <img ngf-src="file" class="doc-file-thumbnail" ngf-accept="'.png,.bmp,.jpg,.jpeg,.gif'" ng-show="file.type.indexOf('image/') >= 0"></img>
+              <img src="images/file-formats-icons/pdf.png" class="doc-file-thumbnail" ng-show="file.type=='application/pdf'"></img>
+            </div>
+            <div style="position:absolute; display:block; top:5px; right:5px">
+              <div style="display:block; min-height:45px; border:1px; cursor:pointer " ng-click="docsCtrl.removeFile(file, docType.type)">
+                <span ng-show="showDelete"><i style="color:red; font-size:20px;" class="fa fa-times-circle"></i></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="doc-browse-container" ngf-select ng-model="docsCtrl.myFiles1" ngf-change="docsCtrl.filesDropped($files, $event, $rejectedFiles, docType.type)"
+      ngf-multiple="true" ngf-accept="{{docsCtrl.docType.ext}}" accept="image/*, application/pdf" ngf-max-size="5242880">
+        <i class="fa fa-desktop doc-browse-icon" ></i>
+      </div>
+    </div>
+  </div>
+</div>

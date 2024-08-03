@@ -1,0 +1,106 @@
+<div style="padding: 30px 15px">
+  <form name="form" novalidate ng-submit="form.$valid && rCtrl.runReport()">
+    <div layout="row" layout-wrap>
+      <md-input-container style="margin: 7px 0px 0px 0px; min-width: 230px">
+        <label>Report</label>
+        <md-select ng-model="rCtrl.selectedReport" placeholder="Select Report" ng-model-options="{trackBy: '$value.key'}" md-container-class="atm-select" ng-change="rCtrl.onInputsChanged()">
+          <md-option ng-value="opt" ng-repeat="opt in rCtrl.reportTypes">{{ opt.label }}</md-option>
+        </md-select>
+      </md-input-container>
+      <md-input-container style="margin: 7px 0px 0px 20px; min-width: 150px">
+        <label>Period</label>
+        <md-select ng-model="rCtrl.selectedPeriod" ng-change="rCtrl.onPeriodChange()" placeholder="Select Period" ng-model-options="{trackBy: '$value.key'}" md-container-class="atm-select">
+          <md-option ng-value="opt" ng-repeat="opt in rCtrl.periodTypes">{{ opt.label }}</md-option>
+        </md-select>
+      </md-input-container>
+      <md-input-container style="margin: 7px 0px 0px 20px">
+        <label>From Date</label>
+        <input mdc-datetime-picker ng-change="rCtrl.onInputsChanged()" time="false" date="true" type="text" id="fromDate" placeholder="From Date" max-date="rCtrl.endDate" ng-model="rCtrl.startDate" class="md-input" ng-disabled="rCtrl.selectedPeriod.key !== 'custom'" auto-ok="true" click-outside-to-close="true"></input>
+      </md-input-container>
+      <md-input-container style="margin: 7px 0px 0px 20px">
+        <label>To Date</label>
+        <input mdc-datetime-picker ng-change="rCtrl.onInputsChanged()" time="false" date="true" type="text" id="endDate" placeholder="To Date" min-date="rCtrl.startDate" ng-model="rCtrl.endDate" class="md-input" ng-disabled="rCtrl.selectedPeriod.key !== 'custom'" auto-ok="true" click-outside-to-close="true"></input>
+      </md-input-container>
+      <md-button class="atm-button" type="submit"><i class="fa fa-play"></i>&nbsp; &nbsp;Run</md-button>
+    </div>
+  </form>
+  <div ng-show="rCtrl.reportData" style="border-top: 1px solid #4c4c4c; padding-top: 10px; margin-top: 10px">
+    <div layout="row" style="padding-right: 20px">
+      <label>Group By: </label>
+      <md-input-container md-no-float class="atm-input hide-errors" style="padding: 0px; margin: -3px 0px 20px 10px; padding-right: 10px">
+        <md-select class="atm-select" ng-model="rCtrl.groupBy" placeholder="Group By">
+          <md-option ng-value>None</md-option>
+          <md-option ng-value="opt"
+            ng-repeat="opt in rCtrl.groupByTypes">{{ opt.label }}</md-option>
+        </md-select>
+      </md-input-container>
+      <span flex></span>
+      <div ng-click="rCtrl.exportPDF()" style="cursor: pointer"><i class="fa fa-file-pdf-o" style="font-size: 20px"></i></div>
+
+      <!--
+      <div style="padding-right: 10px">
+        <md-autocomplete md-input-name="asset_filter"
+          md-min-length="0"
+          md-selected-item="rCtrl.asset_filter"
+          md-clear-button="true"
+          md-search-text="asset_filter_text"
+          md-items="item in rCtrl.findMatchingAssets(asset_filter_text)"
+          md-item-text="item.name"
+          md-floating-label="Filter By Asset"
+          md-selected-item-change="rCtrl.asetFilterChanged(item)"
+          <md-item-template>
+            <span md-highlight-text="asset_filter_text">{{item.name}}</span>
+          </md-item-template>
+        </md-autocomplete>
+      </div>
+      <div style="padding-right: 10px">
+        <md-autocomplete md-input-name="branch_filter"
+          md-min-length="0"
+          md-selected-item="rCtrl.branch_filter"
+          md-clear-button="true"
+          md-search-text="branch_filter_text"
+          md-items="item in rCtrl.findMatchingBranches(branch_filter_text)"
+          md-item-text="item.name"
+          md-floating-label="Filter By Branch"
+          md-selected-item-change="rCtrl.branchFilterChanged(item)"
+          <md-item-template>
+            <span md-highlight-text="branch_filter_text">{{item.name}}</span>
+          </md-item-template>
+        </md-autocomplete>
+      </div>
+      <div style="padding-right: 10px">
+        <md-autocomplete md-input-name="date_filter"
+          md-min-length="0"
+          md-selected-item="rCtrl.date_filter"
+          md-clear-button="true"
+          md-search-text="date_filter_text"
+          md-items="item in rCtrl.findMatchingDates(date_filter_text)"
+          md-item-text="item.name"
+          md-floating-label="Filter By Date"
+          md-selected-item-change="rCtrl.dateFilterChanged(item)"
+          <md-item-template>
+            <span md-highlight-text="date_filter_text">{{item.name}}</span>
+          </md-item-template>
+        </md-autocomplete>
+      </div>
+    -->
+    </div>
+    <div ng-show="rCtrl.selectedReport.key === 'asset_value_asset'">
+      <div ng-show="rCtrl.groupBy.key === 'asset'" ng-repeat="asset in rCtrl.assetNames" style="padding: 10px 0px; border-bottom: 2px solid #3a3a3a">
+        <label>{{asset.name}}</label>
+        <asset-table data="asset.data" asset-filter="rCtrl.asset_filter" date-filter="rCtrl.date_filter" branch-filter="rCtrl.branch_filter" />
+      </div>
+      <div ng-show="rCtrl.groupBy.key === 'branch'" ng-repeat="asset in rCtrl.branches" style="padding: 10px 0px; border-bottom: 2px solid #3a3a3a">
+        <label>{{asset.name}}</label>
+        <asset-table data="asset.data" asset-filter="rCtrl.asset_filter" date-filter="rCtrl.date_filter" branch-filter="rCtrl.branch_filter" />
+      </div>
+      <div ng-show="rCtrl.groupBy.key === 'month'" ng-repeat="asset in rCtrl.months" style="padding: 10px 0px; border-bottom: 2px solid #3a3a3a">
+        <label>{{asset.name}}</label>
+        <asset-table data="asset.data" asset-filter="rCtrl.asset_filter" date-filter="rCtrl.date_filter" branch-filter="rCtrl.branch_filter" />
+      </div>
+      <div ng-hide="rCtrl.groupBy">
+        <asset-table data="rCtrl.reportData" asset-filter="rCtrl.asset_filter" date-filter="rCtrl.date_filter" branch-filter="rCtrl.branch_filter" />
+      </div>
+    </div>
+  </div>
+<div>

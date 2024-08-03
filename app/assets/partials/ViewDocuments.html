@@ -1,0 +1,15 @@
+<md-dialog aria-label="{{dc.doc.name}}">
+  <md-toolbar>
+    <div class="md-toolbar-tools" style="background-color: #EC725D">
+      <h2>{{dc.doc.name}}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="dc.cancel()">
+        <i class="fa fa-times"></i>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content style="padding: 30px">
+    <img ng-src="{{dc.IMAGE_BASE_URL}}{{dc.doc.image}}" alt="{{dc.doc.name}}" title="{{dc.doc.name}}">
+  </md-dialog-content>
+</md-dialog>

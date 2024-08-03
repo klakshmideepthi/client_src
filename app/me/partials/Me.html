@@ -1,0 +1,51 @@
+<div>
+  <div layout="row" layout-wrap layout-fill="center right" style="margin-top: 10px; padding-right: 15px">
+    <div flex-gt-xs="33" flex-xs="100">
+      <div class="top-box dark-blue" style="margin-left: 15px">
+        <div style="padding-bottom: 10px">{{me.numAssets | number}}</div>
+        <div style="padding-bottom: 10px"> Number of Assets </div>
+        <div> Average across branches: {{me.numAssetsAvg | number:1*(me.numAssetsAvg %1 !== 0)}} </div>
+      </div>
+    </div>
+    <div flex-gt-xs="33" flex-xs="100">
+      <div class="top-box violet" style="margin-left: 15px">
+        <div style="padding-bottom: 10px">{{me.assetValue | currency:undefined:0}}</div>
+        <div style="padding-bottom: 10px"> Total value of Assets </div>
+        <div> Average across branches: {{me.assetValueAvg | currency:undefined:0}}</div>
+      </div>
+    </div>
+    <div flex-gt-xs="33" flex-xs="100">
+      <div class="top-box dark-blue" style="margin-left: 15px">
+        <div style="padding-bottom: 10px">{{me.purchasesThisYear | number}}</div>
+        <div style="padding-bottom: 10px"> Purchases this fiscal year </div>
+        <div> Average across branches: {{me.purchasesThisYearAvg | number:1*(me.purchasesThisYearAvg %1 !== 0)}} </div>
+      </div>
+    </div>
+  </div>
+  <div layout="row" layout-wrap layout-align="space-around" style="margin-top: 10px; padding-right: 15px; height: 440px">
+    <div flex="95" map-lazy-load="https://maps.google.com/maps/api/js"
+  map-lazy-load-params="{{me.googleMapsUrl}}" class="white-bg" style="margin-bottom: 15px">
+      <ng-map zoom="11" center="[40.74, -74.18]" scrollwheel="false" zoom-to-include-markers="auto">
+        <marker ng-repeat="p in me.markers"
+        position="{{p.pos}}"
+        id="{{p.branch._id}}"
+        title="{{p.branch.name}}"
+        icon='/images/bank_small.jpg'
+        on-click="me.branchSelected(event, me, p)"></marker>
+      </ng-map>
+    </div>
+    <div flex-gt-xs="50" class="white-bg" style="margin-left: 15px">
+      <canvas id="pie" class="chart chart-pie" chart-data="me.assetChart.data" chart-labels="me.assetChart.labels"></canvas>
+    </div>
+    <div flex-gt-xs="45" class="white-bg">
+      <calendar selected="me.today" has-events="me.hasEvents(day)" date-selected="me.dateSelected(day)"></calendar>
+      <div ng-show="me.notifsToShow">
+        <div style="margin-bottom: 10px">{{me.selectedDay.format('D, MMM YYYY')}}</div>
+        <div ng-repeat="item in me.notifsToShow">
+          <div>{{item.type}} of <b>{{item.name}}</b> {{item.isPast ? 'expired' : 'will expire'}}</div>
+        </div>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

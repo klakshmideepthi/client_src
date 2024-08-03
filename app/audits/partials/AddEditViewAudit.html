@@ -1,0 +1,196 @@
+<div>
+  <div layout="row" style="padding:0px 15px" layout-wrap>
+    <div>
+      <h4 ng-show="audCtrl.operation === 'add'">Starting a new audit</h4>
+      <h4 ng-show="audCtrl.operation === 'view'">Viewing audit: {{audCtrl.audit.title}}</h4>
+    </div>
+    <div flex></div>
+    <div ng-hide="audCtrl.saving_thing_data">
+      <md-button ng-show="audCtrl.editing"
+        class="atm-button md-raised md-primary"
+        style="background: #23576a !important; color: #ffffff !important;font-weigth:400"
+        ng-click="audCtrl.cancel($event)">Cancel
+      </md-button>
+      <md-button ng-show="audCtrl.editing"
+        class="atm-button md-raised md-primary"
+        style="background: #23576a !important; color: #ffffff !important;font-weight:400"
+        ng-click="audCtrl.saveAudit($event)">Save
+      </md-button>
+      <md-button ng-hide="audCtrl.editing"
+        class="atm-button md-raised md-primary"
+        style="background: #23576a !important; color: #ffffff !important;font-weigth:400"
+        ng-click="audCtrl.close($event)">Close
+      </md-button>
+      <md-button ng-hide="audCtrl.editing"
+        class="atm-button md-raised md-primary"
+        style="background: #23576a !important; color: #ffffff !important;font-weight:400"
+        ng-click="audCtrl.startEdit()">Edit
+      </md-button>
+    </div>
+    <div ng-show="audCtrl.saving_thing_data">
+      Uploading Thing data and documents. Please wait.
+    </div>
+  </div>
+  <form name="audCtrl.auditForm">
+    <div layout="row" layout-wrap>
+      <div flex-sm="50" flex-xs="100" flex-gt-sm="33">
+        <div class='edit-panel'>
+            <!-- Show this only if:
+              * We are not in a view mode
+              AND
+              * We are in add mode
+               AND
+                * user has access to all branches
+                OR
+                * user has access to more than one branch
+            -->
+            <div ng-show="audCtrl.editing && audCtrl.operation === 'add' && (!audCtrl.auditService.accessibleBranchIds || audCtrl.auditService.accessibleBranchIds.length > 1)">
+              <md-autocomplete required md-input-name="branch"
+                md-min-length="0"
+                md-selected-item="audCtrl.selectedBranch"
+                md-clear-button="true"
+                md-search-text="searchText"
+                md-items="item in audCtrl.findMatchingLocations(searchText)"
+                md-item-text="item.name"
+                md-floating-label="Select Audit Location"
+                md-selected-item-change="audCtrl.branchChanged(item)"
+                <md-item-template>
+                  <span md-highlight-text="searchText">{{item.name}}</span>
+                </md-item-template>
+                <div ng-messages="audCtrl.auditForm.branch.$error" md-auto-hide="false">
+                  <div ng-message="required">Please select a branch to audit</div>
+                </div>
+              </md-autocomplete>
+            </div>
+            <div ng-hide="audCtrl.editing && audCtrl.operation === 'add' && (!audCtrl.auditService.accessibleBranchIds || audCtrl.auditService.accessibleBranchIds.length > 1)">Audit Location: <b>{{audCtrl.audit.branch}}</b> </div>
+        </div>
+        <div class="edit-panel">
+          <div ng-show="audCtrl.editing">
+            <md-input-container class="atm-input" style="width: 100%">
+              <label>Title</label>
+              <input required type="text" ng-model="audCtrl.audit.title" name="title">
+              <div ng-messages="audCtrl.auditForm.title.$error" ng-if="audCtrl.auditForm.title.$touched && audCtrl.auditForm.title.$invalid">
+                <div ng-message="required">Please enter a title for the audit</div>
+              </div>
+            </md-input-container>
+            <md-input-container class="atm-input" style="width: 100%">
+              <label>Notes</label>
+              <textarea ng-model="audCtrl.audit.notes" rows="3" md-maxlength="150" limit-length-to="150" ></textarea>
+            </md-input-container>
+          </div>
+          <div ng-hide="audCtrl.editing"><b>{{audCtrl.audit.title}}</b></div>
+          <div ng-hide="audCtrl.editing">{{audCtrl.audit.notes}}</div>
+        </div>
+      </div>
+      <div flex-sm="50" flex-xs="100" flex-gt-sm="66">
+        <div>
+          <div class="edit-panel">
+            <div>
+              <span>Filter</span>
+              <span
+              style="cursor: pointer; float: right; font-size: 12px; text-decoration: underline"
+              ng-click="audCtrl.clearFilters()">
+                Show All
+              </span>
+            </div>
+            <div>
+              <label style="margin-right: 10px; margin-bottom: 0px">Search: </label>
+              <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 0px">
+                <input type="text" ng-model="audCtrl.filter.searchText">
+              </md-input-container>
+              <!-- TODO: Asset category is not supported yet -->
+              <!-- <label style="margin-left: 10px; margin-right: 10px; margin-bottom: 0px">Asset Type: </label> -->
+              <!-- <md-input-container class="atm-input hide-errors" style="margin: 0px; padding: 0px">
+                <md-select ng-model="audCtrl.filter.assetType">
+                  <md-option ng-value>All</md-option>
+                  <md-option ng-value="opt"
+                    ng-repeat="opt in ['Electronics', 'Furniture', 'Stationery', 'Lockers']">{{ opt }}</md-option>
+                </md-select>
+              </md-input-container> -->
+              <label style="margin-left: 10px; margin-right: 10px; margin-bottom: 0px">Audit Status: </label>
+              <md-input-container class="atm-input hide-errors" style="margin: 0px; padding: 0px">
+                <md-select ng-model="audCtrl.filter.auditStatus">
+                  <md-option ng-value>All</md-option>
+                  <md-option ng-value="opt" ng-repeat="opt in audCtrl.auditTypeFilter">{{ opt }}</md-option>
+                </md-select>
+              </md-input-container>
+              <!-- Date based filter -->
+            </div>
+          </div>
+          <md-content class="edit-panel">
+            <div layout="row">
+              <div style="line-height: 50px">{{paginationOptions.totalItems}} {{paginationOptions.totalItems === 1 ? 'Asset' : 'Assets'}}</div>
+              <span flex />
+            </div>
+            <md-table-container>
+              <table md-table md-progress="audCtrl.branchService.branchAssetsPromise[audCtrl.audit.branch_id]">
+                <colgroup span="5" style="border-right: 1px solid #e0e0e0"/>
+                <colgroup span="4"/>
+                <thead md-head md-order="query.order">
+                  <tr md-row>
+                    <th style="padding: 0 20px 0 5px; border: 1px solid #dcdcdc" md-column md-order-by="_index">#</th>
+                    <th style="padding: 0 20px 0 5px; border: 1px solid #dcdcdc" md-column md-order-by="name" >Asset Name</th>
+                    <!-- <th style="padding: 0 20px 0 5px; border: 1px solid #dcdcdc" md-column md-order-by="serialNumber">Serial #</th> -->
+                    <!-- TODO Asset Category -->
+                    <th style="padding: 0 20px 0 5px; border: 1px solid #dcdcdc" md-column md-numeric md-order-by="quantityExpected">Quantity</th>
+                    <th style="padding: 0 20px 0 5px; border: 1px solid #dcdcdc" md-column md-order-by="auditStatus">Status</th>
+                    <th style="padding: 0 20px 0 5px; border: 1px solid #dcdcdc" md-column md-numeric md-order-by="auditQuantity">Quantity Found</th>
+                    <th style="padding: 0 20px 0 5px; border: 1px solid #dcdcdc" md-column md-order-by="auditDate">Date</th>
+                    <th style="padding: 0 20px 0 5px; border: 1px solid #dcdcdc" md-column md-order-by="auditComment">Comment</th>
+                    <th ng-show="audCtrl.editing" md-column md-order-by="changed" style="padding: 0 20px 0 0; border: 1px solid #dcdcdc">Undo</th>
+                  </tr>
+                 </thead>
+                 <tbody>
+                   <tr style="height: 32px" ng-style="item.changed ? {color: '#EC725D','font-style': 'italic'} : {color: '#3A3A3A'}"
+                    ng-repeat="item in audCtrl.audit.assets
+                     | atmsearch : audCtrl.filter.searchText : ['name', 'serialNumber', 'comment']
+                     | atm_audit_status_filter : audCtrl.filter.auditStatus : 'auditStatus'
+                     | orderBy: query.order" | track by $index>
+                     <!-- <td>{{(paginationOptions.itemsPerPage * (paginationOptions.currentPage - 1)) + $index + 1}}</td> -->
+                     <td style="padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>{{item._index + 1}}</td>
+                     <td style="padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>{{item.name}}</td>
+                     <!-- <td style="white-space: nowrap; padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>{{item.serialNumber}}</td> -->
+                     <td style="white-space: nowrap; padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>{{item.quantityExpected}}</td>
+                     <td style="padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>
+                       <div ng-show="audCtrl.editing">
+                         <md-input-container md-no-float class="atm-input hide-errors" style="margin-top: -5px; margin-bottom: 0px">
+                           <md-select ng-model="item.auditStatus" placeholder="Audit Status" ng-change="audCtrl.onChange(item)">
+                             <md-option ng-value="opt" ng-repeat="opt in item.quantityAvailable > 1 ? audCtrl.auditTypeFilter : audCtrl.auditTypeFilterNoPartial">{{ opt }}</md-option>
+                           </md-select>
+                         </md-input-container>
+                       </div>
+                       <div ng-hide="audCtrl.editing" ng-bind="item.auditStatus"></div>
+                     </td>
+                     <!-- Having following <td>s combined into one <td> is not working for some reason. Hence dividing them into two <td>s -->
+                     <td  style="padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>
+                       <div ng-show="audCtrl.editing && item.auditStatus === 'Partial' && item.quantityAvailable > 1">
+                         <md-input-container md-no-float class="atm-input hide-errors" style="margin-top: -5px; margin-bottom: 0px">
+                           <input type="number" placeholder="Quantity Found" ng-model="item.auditQuantity" min="0" max="{{item.quantityAvailable}}">
+                         </md-input-container>
+                       </div>
+                       <div ng-hide="audCtrl.editing" ng-bind="item.auditStatus === 'Partial' ? item.auditQuantity : item.auditStatus === 'Found' ? item.quantityExpected : 0" />
+                     </td>
+                     <td style="padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>{{item.auditDate | date:'dd/MMM/yyyy'}}</td>
+                     <td style="padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>
+                       <div ng-show="audCtrl.editing">
+                         <md-input-container md-no-float class="atm-input hide-errors" style="margin-top: -5px; margin-bottom: 0px">
+                           <input type="text" placeholder="Comment" ng-model="item.auditComment">
+                         </md-input-container>
+                       </div>
+                       <div ng-hide="audCtrl.editing" ng-bind="item.auditComment" />
+                     </td>
+                     <td ng-show="audCtrl.editing" style="padding: 10px 20px 10px 5px; border: 1px solid #dcdcdc; color: inherit" md-cell>
+                       <i ng-style="{cursor: item.changed ? 'pointer' : 'default'}"
+                       ng-class="{'fa fa-undo': item.changed}"
+                       ng-click="audCtrl.undoChange(item)">
+                     </td>
+                   </tr>
+                 </tbody>
+               </table>
+          </md-content>
+        </div>
+        <!-- ng-click="undoChange({index: (paginationOptions.itemsPerPage * (paginationOptions.currentPage - 1)) + $index, asset: item})" /> -->
+      </div>
+    </div>
+  </form>
+</div>

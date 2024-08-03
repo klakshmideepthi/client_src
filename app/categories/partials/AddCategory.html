@@ -1,0 +1,84 @@
+<md-dialog style="width: 100%; height: 100%;" aria-label="{{catAddCtrl.operation === 'add' ? 'Adding new branch' : 'Editing a branch'}}">
+  <form name="form" novalidate ng-submit="form.$valid && catAddCtrl.submitCategory()">
+  <md-toolbar>
+    <div class="md-toolbar-tools" style="background-color: #EC725D">
+      <h2 ng-show="catAddCtrl.operation === 'add'">Adding new category</h2>
+      <h2 ng-hide="catAddCtrl.operation === 'add'">Editing category {{catAddCtrl.newobj.name}}</h2>
+      <span flex></span>
+      <md-button class="md-icon-button" ng-click="catAddCtrl.cancel()">
+        <i class="fa fa-times"></i>
+      </md-button>
+    </div>
+  </md-toolbar>
+
+  <md-dialog-content style="padding: 10px 10px 5px 10px">
+    <div ng-show="catAddCtrl.currentPage === 'confirm_close'" style="padding-bottom: 50px">
+      Are you sure you want to close? All your changes will be lost.
+    </div>
+    <div ng-hide="catAddCtrl.currentPage === 'confirm_close'" layout="row" layout-wrap layout-align="space-between">
+      <fieldset class="atm-fieldset" flex-xs="100" flex="50">
+        <legend>Details</legend>
+        <md-input-container class="atm-input" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+          <input required name="name" ng-model="catAddCtrl.newobj.name" type="text" placeholder="Name"></input>
+          <div ng-messages="form.name.$error">
+            <div ng-message="required">Name required.</div>
+          </div>
+        </md-input-container>
+        <md-input-container class="atm-input" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+          <textarea name="description" ng-model="catAddCtrl.newobj.description" type="text" placeholder="Description" md-maxlength="150"></textarea>
+          <div ng-messages="form.description.$error">
+            <div ng-message="required">description required.</div>
+          </div>
+        </md-input-container>
+      </fieldset>
+      <fieldset class="atm-fieldset" flex-xs="100" flex="45">
+        <legend>Depreciation</legend>
+        <md-input-container class="atm-input hide-errors" style="padding: 0px; margin: 0px; width: 100%">
+          <md-autocomplete md-input-name="dep_method"
+            md-min-length="0"
+            md-selected-item="catAddCtrl.selectedDepMethod"
+            md-clear-button="true"
+            md-search-text="searchText"
+            md-items="item in catAddCtrl.findMatchingDepMethods(searchText)"
+            md-item-text="item.label"
+            md-selected-item-change="catAddCtrl.depMethodChanged(item)"
+            md-floating-label="Select method">
+            <md-item-template>
+              <span md-highlight-text="searchText">{{item.label}}</span>
+            </md-item-template>
+            <div ng-messages="form.dep_method.$error" md-auto-hide="false">
+              <div ng-message="required">Please select a depreciation method</div>
+            </div>
+          </md-autocomplete>
+        </md-input-container>
+        <md-input-container ng-show="catAddCtrl.selectedDepMethod && catAddCtrl.selectedDepMethod.key !== 'none'" class="atm-input" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+          <input ng-required="catAddCtrl.selectedDepMethod && catAddCtrl.selectedDepMethod.key !== 'none'" name="salvage" ng-model="catAddCtrl.newobj.salvage_value" type="number" min="0" max="100" placeholder="Salvage Value (%)"></input>
+          <div ng-messages="form.salvage.$error">
+            <div ng-message="required">Salvage Value required.</div>
+            <div ng-message="min">Salvage Value should be between 0 to 100.</div>
+            <div ng-message="max">Salvage Value should be between 0 to 100.</div>
+          </div>
+        </md-input-container>
+        <md-input-container ng-show="catAddCtrl.selectedDepMethod && catAddCtrl.selectedDepMethod.key !== 'none'" class="atm-input" style="padding: 0px; margin: 18px 0px 0px 0px; width: 100%">
+          <input ng-required="catAddCtrl.selectedDepMethod && catAddCtrl.selectedDepMethod.key !== 'none'" name="lifespan" ng-model="catAddCtrl.newobj.lifespan" type="number" min="1" placeholder="Life Span"></input>
+          <div ng-messages="form.lifespan.$error">
+            <div ng-message="required">Life Span Value required.</div>
+            <div ng-message="min">Life Span should be >= 1</div>
+          </div>
+        </md-input-container>
+      </fieldset>
+    </div>
+  </md-dialog-content>
+  <md-dialog-actions layout="row" ng-show="catAddCtrl.currentPage === 'confirm_close'">
+    <div flex></div>
+    <md-button class="atm-button" ng-click="catAddCtrl.closeConfirmed()">Yes</md-button>
+    <md-button ng-click="catAddCtrl.closeCancelled()">No</md-button>
+ </md-dialog-actions>
+  <md-dialog-actions layout="row" ng-hide="catAddCtrl.currentPage === 'confirm_close'">
+    <div flex></div>
+    <md-button type="submit" class="atm-button" ng-show="catAddCtrl.operation !== 'edit'">Add</md-button>
+    <md-button type="submit" class="atm-button" ng-show="catAddCtrl.operation === 'edit'">Save</md-button>
+    <md-button ng-click="catAddCtrl.cancel()">Cancel</md-button>
+ </md-dialog-actions>
+</form>
+</md-dialog>

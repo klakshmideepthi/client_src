@@ -1,0 +1,44 @@
+<div style="padding: 30px 15px">
+  <div>
+    <md-button class="md-fab atm-fab-speed-dial atm-md-fab" aria-label="Create Category" ng-click="catsCtrl.openAddDialog()"><i class="fa fa-plus"></i></md-button>
+  </div>
+  <div layout="row" layout-wrap>
+    <div style="padding-right: 10px">
+      <md-input-container class="atm-input hide-errors" style="min-width: 300px; padding: 0px; margin: 0px" md-no-float>
+        <label style="margin-left: -20px">Search</label>
+        <md-icon md-font-icon="fa fa-search" style="top: 2px"></md-icon>
+        <input type="text" ng-model="catsCtrl.filter.searchTxt" placeholder="Search for category" style="padding-left: 20px">
+      </md-input-container>
+    </div>
+  </div>
+  <md-table-container>
+    <table md-table md-progress="catsCtrl.promise">
+      <thead md-head md-order="query.order">
+        <tr md-row>
+          <th style="padding: 0 10px 0 5px; width: 50px" md-column md-order-by="_index">#</th>
+          <th style="padding: 0 10px 0 5px" md-column md-order-by="name">Title</th>
+          <th style="padding: 0 10px 0 5px" md-column md-order-by="description">Description</th>
+          <th style="padding: 0 10px 0 5px; width: 150px" md-column md-order-by="dep_method">Depreciaion Method</th>
+          <th style="padding: 0 10px 0 5px; width: 100px" md-numeric md-column md-order-by="savlage_value">Salvage Value</th>
+          <th style="padding: 0 10px 0 5px; width: 80px" md-numeric md-column md-order-by="lifespan">Life Span</th>
+          <th style="padding: 0 10px 0 5px; width: 80px" md-column>Action</th>
+        </tr>
+      </thead>
+      <tbody md-tbody>
+          <tr style="height: 32px; cursor: pointer" ng-click="catsCtrl.openEditDialog($event, item)"
+            id="row{{item._id}}"
+            ng-repeat="item in catsCtrl.catService.getCategories()
+              | atmsearch : catsCtrl.filter.searchTxt : ['name', 'description']
+              | orderBy: query.order">
+            <td style="padding: 10px 10px 10px 5px; width: 50px" md-cell>{{item._index + 1}}</td>
+            <td style="padding: 10px 10px 10px 5px" md-cell>{{item.name}}</td>
+            <td style="white-space: nowrap; padding: 10px 10px 10px 5px" md-cell>{{item.description}}</td>
+            <td style="white-space: nowrap; padding: 10px 10px 10px 5px" md-cell>{{catsCtrl.catService.getDepMethodLabel(item.dep_method)}}</td>
+            <td style="white-space: nowrap; width: 100px; padding: 10px 10px 10px 5px" md-cell>{{item.salvage_value}} %</td>
+            <td style="white-space: nowrap; width: 80px; padding: 10px 10px 10px 5px" md-cell>{{item.lifespan}} years</td>
+            <td class="atm-back-button" style="padding: 10px 10px 10px 5px; width: 80px" md-cell><i class="fa fa-trash" ng-click="catsCtrl.deleteCategory($event, item)"></i></td>
+          </tr>
+      </tbody>
+    </table>
+  </md-table-container>
+</div>

@@ -1,0 +1,13 @@
+<!-- Root container -->
+<div ui-view="dashboard" ng-show="app.ifStateIncludes('root.me')"></div>
+<div ui-view="assets" ng-show="app.ifStateIncludes('root.assets')"></div>
+<div ui-view="asset" ng-show="app.ifStateIncludes('root.asset')"></div>
+<div ui-view="branches" ng-show="app.ifStateIncludes('root.branches')"></div>
+<div ui-view="branch" ng-show="app.ifStateIncludes('root.branch')"></div>
+<div ui-view="users" ng-show="app.ifStateIncludes('root.users')"></div>
+<div ui-view="user" ng-show="app.ifStateIncludes('root.user')"></div>
+<div ui-view="reports" ng-show="app.ifStateIncludes('root.reports')"></div>
+<div ui-view="audits" ng-show="app.ifStateIncludes('root.audits')"></div>
+<div ui-view="audit" ng-show="app.ifStateIncludes('root.audit')"></div>
+<div ui-view="cats" ng-show="app.ifStateIncludes('root.cats')"></div>
+<div ui-view="workflows" ng-show="app.ifStateIncludes('root.workflows')"></div>

@@ -1,0 +1,64 @@
+.atm-button {
+  max-height: 30px;
+  background-color: #ec715d !important;
+  color: #ffffff !important;
+  box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15) !important;
+}
+.atm-button:hover {
+  background-color: #e7492f !important;
+}
+.atm-button:hover {
+  background-color: #e7492f !important;
+}
+.atm-button:focus {
+  background-color: #e7492f !important;
+}
+.atm-input.md-input-focused label {
+  color: #23576a !important;
+}
+.atm-input.md-input-focused .md-input {
+  border-bottom-color: #23576a !important;
+}
+
+.headroom {
+  position: fixed;
+  padding: 15px;
+  top: -110px;
+  left: 0;
+  height: 110px;
+  transition: top 1s cubic-bezier(0.17, 0.04, 0.03, 0.94);
+  width: 100%;
+  background-color: #23576a;
+}
+.headroom--pinned {
+}
+.headroom--unpinned {
+  top: 0px;
+}
+.headroom--not-top {
+  top: 0px;
+}
+.headroom--top {
+  top: -110px;
+}
+
+.double-border {
+  margin-top: 13px;
+  display: inline-block;
+}
+.double-border:before,
+.double-border:after {
+  content: '';
+  display: block;
+  background: #B9B9B9;
+  height: 1px;
+}
+.double-border:before {
+  width: 136px;
+}
+.double-border:after {
+  width: 72px;
+  margin-left: 32px;
+  margin-top: 5px;
+  height: 2px;
+}
